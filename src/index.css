@@ -47,6 +47,90 @@
   background: #FDE047;
 }
 
+/* =========================================================================
+   Dynamic Desktop Theme Color Palettes
+   ========================================================================= */
+
+[data-theme="cyberpunk"] {
+  --theme-accent: #00F0FF;
+  --theme-primary: #FF007F;
+}
+[data-theme="cyberpunk"] body {
+  background-color: #080914 !important;
+}
+[data-theme="cyberpunk"] .bg-\[\#12131F\],
+[data-theme="cyberpunk"] .bg-\[\#0A0B12\],
+[data-theme="cyberpunk"] .bg-\[\#0E0F1A\],
+[data-theme="cyberpunk"] .bg-\[\#13141F\] {
+  background-color: #0B0D1E !important;
+}
+[data-theme="cyberpunk"] .bg-\[\#1C1E2D\],
+[data-theme="cyberpunk"] .bg-\[\#151624\],
+[data-theme="cyberpunk"] .bg-\[\#181928\],
+[data-theme="cyberpunk"] .bg-\[\#161726\] {
+  background-color: #121630 !important;
+}
+
+[data-theme="matrix"] {
+  --theme-accent: #00FF66;
+  --theme-primary: #34D399;
+}
+[data-theme="matrix"] body {
+  background-color: #020703 !important;
+}
+[data-theme="matrix"] .bg-\[\#12131F\],
+[data-theme="matrix"] .bg-\[\#0A0B12\],
+[data-theme="matrix"] .bg-\[\#0E0F1A\],
+[data-theme="matrix"] .bg-\[\#13141F\] {
+  background-color: #040E06 !important;
+}
+[data-theme="matrix"] .bg-\[\#1C1E2D\],
+[data-theme="matrix"] .bg-\[\#151624\],
+[data-theme="matrix"] .bg-\[\#181928\],
+[data-theme="matrix"] .bg-\[\#161726\] {
+  background-color: #08160B !important;
+}
+
+[data-theme="vaporwave"] {
+  --theme-accent: #FF71CE;
+  --theme-primary: #01CDFE;
+}
+[data-theme="vaporwave"] body {
+  background-color: #11051D !important;
+}
+[data-theme="vaporwave"] .bg-\[\#12131F\],
+[data-theme="vaporwave"] .bg-\[\#0A0B12\],
+[data-theme="vaporwave"] .bg-\[\#0E0F1A\],
+[data-theme="vaporwave"] .bg-\[\#13141F\] {
+  background-color: #160726 !important;
+}
+[data-theme="vaporwave"] .bg-\[\#1C1E2D\],
+[data-theme="vaporwave"] .bg-\[\#151624\],
+[data-theme="vaporwave"] .bg-\[\#181928\],
+[data-theme="vaporwave"] .bg-\[\#161726\] {
+  background-color: #230B3D !important;
+}
+
+[data-theme="coffee"] {
+  --theme-accent: #F59E0B;
+  --theme-primary: #D97706;
+}
+[data-theme="coffee"] body {
+  background-color: #120A05 !important;
+}
+[data-theme="coffee"] .bg-\[\#12131F\],
+[data-theme="coffee"] .bg-\[\#0A0B12\],
+[data-theme="coffee"] .bg-\[\#0E0F1A\],
+[data-theme="coffee"] .bg-\[\#13141F\] {
+  background-color: #1A0E08 !important;
+}
+[data-theme="coffee"] .bg-\[\#1C1E2D\],
+[data-theme="coffee"] .bg-\[\#151624\],
+[data-theme="coffee"] .bg-\[\#181928\],
+[data-theme="coffee"] .bg-\[\#161726\] {
+  background-color: #24140B !important;
+}
+
 /* Instability Tremor & Tilted Off-Axis FX */
 @keyframes slightTremor {
   0%, 100% { transform: translate(0, 0) rotate(0deg); }

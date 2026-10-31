@@ -4,6 +4,7 @@ import { usePhysicsCollapse } from '../physics/PhysicsWorld';
 import { audioManager } from '../audio/AudioManager';
 import { TopBar } from './TopBar';
 import { Sidebar } from './Sidebar';
+import { SidebarDrawer } from './SidebarDrawer';
 import { MiniEditor } from './MiniEditor';
 import { StatusPanel } from './StatusPanel';
 import { SystemToast } from './SystemToast';
@@ -14,6 +15,48 @@ import { AlertOctagon, Flame } from 'lucide-react';
 export function Workspace({ onJudgeReset }) {
   const { state, actions } = useOS();
   const { mood, trust } = state;
+
+  // Drawer, Theme, and Branch states
+  const [activeDrawerTab, setActiveDrawerTab] = useState(null);
+  const [activeBranch, setActiveBranch] = useState('main');
+  const [currentTheme, setCurrentTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('namma_theme') || 'arcade';
+    }
+    return 'arcade';
+  });
+
+  const [settings, setSettings] = useState({
+    soundBgm: true,
+    soundSfx: true,
+    proceduralAudio: true,
+    autoAdvance: true,
+    codeJolt: true,
+    crtScanlines: true,
+    mascotAttitude: 'savage',
+  });
+
+  // Apply theme to document
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      localStorage.setItem('namma_theme', currentTheme);
+    }
+  }, [currentTheme]);
+
+  const handleUpdateSettings = (key, val) => {
+    setSettings((prev) => ({ ...prev, [key]: val }));
+    if (key === 'soundBgm') {
+      if (!val) {
+        audioManager.setBgmStage(null);
+      } else {
+        audioManager.setBgmStage(mood);
+      }
+    }
+    if (key === 'soundSfx') {
+      audioManager.isMuted = !val;
+    }
+  };
 
   // Coordinate procedural background music with OS mood stages (Calm, Suspicious, Boss)
   useEffect(() => {
@@ -97,12 +140,32 @@ export function Workspace({ onJudgeReset }) {
       )}
 
       {/* 1. Top Navigation Bar */}
-      <TopBar onJudgeReset={onJudgeReset} />
+      <TopBar onJudgeReset={onJudgeReset} activeBranch={activeBranch} />
 
       {/* 2. Main Workspace Horizontal Layout */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* Left Tool Sidebar */}
-        <Sidebar />
+        <Sidebar 
+          activeTab={activeDrawerTab} 
+          onTabClick={setActiveDrawerTab} 
+        />
+
+        {/* Expandable Sidebar Drawer (Settings, Git, Search, Files, Debug, Plugins) */}
+        {activeDrawerTab && (
+          <SidebarDrawer
+            activeTab={activeDrawerTab}
+            onClose={() => setActiveDrawerTab(null)}
+            currentTheme={currentTheme}
+            onThemeChange={(newTheme) => {
+              setCurrentTheme(newTheme);
+              audioManager.playSfx('chime');
+            }}
+            settings={settings}
+            onUpdateSettings={handleUpdateSettings}
+            activeBranch={activeBranch}
+            onSelectBranch={setActiveBranch}
+          />
+        )}
 
         {/* Central Safe Zone: Mini Code Editor */}
         <main className="flex-1 flex flex-col p-3 overflow-hidden bg-[#0A0B12] relative">

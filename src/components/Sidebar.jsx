@@ -13,16 +13,24 @@ import {
   Skull
 } from 'lucide-react';
 
-export function Sidebar() {
+export function Sidebar({ activeTab: controlledActiveTab, onTabClick: controlledTabClick }) {
   const { state, actions } = useOS();
   const { mood } = state;
-  const [activeTab, setActiveTab] = useState('files');
+  const [internalTab, setInternalTab] = useState(null);
+
+  const activeTab = controlledActiveTab !== undefined ? controlledActiveTab : internalTab;
 
   // Rapid click tracking for sidebar icons
   const clickTrackerRef = useRef(createClickTracker(4, 1500));
 
   const handleTabClick = (tabId) => {
-    setActiveTab(tabId);
+    const nextTab = activeTab === tabId ? null : tabId;
+    if (controlledTabClick) {
+      controlledTabClick(nextTab);
+    } else {
+      setInternalTab(nextTab);
+    }
+
     const { isSpam, count } = clickTrackerRef.current();
     if (isSpam) {
       actions.reportRapidClick(`Sidebar_${tabId}`, count);
@@ -115,8 +123,12 @@ export function Sidebar() {
         <button
           data-physics-id="sidebar-settings-icon"
           onClick={() => handleTabClick('settings')}
-          className="w-9 h-9 border-2 border-black bg-[#1B1D2E] text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center shadow-[1px_1px_0px_#000] cursor-pointer"
-          title="OS Settings"
+          className={`w-9 h-9 border-2 border-black flex items-center justify-center shadow-[1px_1px_0px_#000] cursor-pointer transition-all ${
+            activeTab === 'settings'
+              ? 'bg-[#FACC15] text-black shadow-[2px_2px_0px_#000]'
+              : 'bg-[#1B1D2E] text-slate-400 hover:bg-slate-700 hover:text-white'
+          }`}
+          title="OS Settings & Themes"
         >
           <Settings className="w-4 h-4 stroke-[2]" />
         </button>

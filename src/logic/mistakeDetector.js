@@ -9,8 +9,9 @@ export const CODING_CHALLENGES = [
     title: 'The Coffee Machine Compiler',
     difficulty: 'Novice Hacker',
     tag: 'BRACKET MATCHING',
+    branch: 'feature/coffee-engine',
     starterCode: `// =========================================================================
-// ☕ CHALLENGE 1/4: THE COFFEE MACHINE COMPILER
+// ☕ CHALLENGE 1/7 [BRANCH: feature/coffee-engine]
 // TASK: Fix the syntax error in calculateCoffeeFuel()!
 // There is an unclosed bracket hanging in the if-block below.
 // Close all brackets properly and click "▶ RUN CODE"!
@@ -27,7 +28,7 @@ function calculateCoffeeFuel(cupsDrank, hoursAwake) {
 
 console.log(calculateCoffeeFuel(5, 14));`,
     solvedCode: `// =========================================================================
-// ☕ CHALLENGE 1/4: THE COFFEE MACHINE COMPILER (CORRECT ANSWER)
+// ☕ CHALLENGE 1/7 [BRANCH: feature/coffee-engine] (CORRECT ANSWER)
 // TASK: Fix the syntax error in calculateCoffeeFuel()!
 // =========================================================================
 function calculateCoffeeFuel(cupsDrank, hoursAwake) {
@@ -49,8 +50,9 @@ console.log(calculateCoffeeFuel(5, 14));`,
     title: 'The "var" Purge',
     difficulty: 'Modern Standards',
     tag: 'LEGACY REFACTOR',
+    branch: 'refactor/ban-var',
     starterCode: `// =========================================================================
-// 🚫 CHALLENGE 2/4: THE "var" PURGE
+// 🚫 CHALLENGE 2/7 [BRANCH: refactor/ban-var]
 // TASK: In 2026, the OS refuses to compile code using deprecated 'var'!
 // Refactor all 'var' declarations to 'const' or 'let', ensure all statements
 // have semicolons, and click "▶ RUN CODE"!
@@ -67,7 +69,7 @@ function checkSurvival() {
 
 console.log(hackerName, "survival check:", checkSurvival());`,
     solvedCode: `// =========================================================================
-// 🚫 CHALLENGE 2/4: THE "var" PURGE (CORRECT ANSWER)
+// 🚫 CHALLENGE 2/7 [BRANCH: refactor/ban-var] (CORRECT ANSWER)
 // TASK: In 2026, the OS refuses to compile code using deprecated 'var'!
 // =========================================================================
 const hackerName = "CaffeineNinja";
@@ -89,8 +91,9 @@ console.log(hackerName, "survival check:", checkSurvival());`,
     title: 'Prize Pool Splitter',
     difficulty: 'Bracket Alignment',
     tag: 'MISMATCH FIX',
+    branch: 'fix/prize-pool',
     starterCode: `// =========================================================================
-// 💰 CHALLENGE 3/4: PRIZE POOL SPLITTER
+// 💰 CHALLENGE 3/7 [BRANCH: fix/prize-pool]
 // TASK: Your hackathon team won 1st place! Fix the mismatched bracket
 // in the splitPrizePool function so everyone can get paid!
 // =========================================================================
@@ -106,7 +109,7 @@ function splitPrizePool(totalPrize, teamSize) {
 
 console.log("Payout per hacker: $" + splitPrizePool(6000, 4));`,
     solvedCode: `// =========================================================================
-// 💰 CHALLENGE 3/4: PRIZE POOL SPLITTER (CORRECT ANSWER)
+// 💰 CHALLENGE 3/7 [BRANCH: fix/prize-pool] (CORRECT ANSWER)
 // TASK: Your hackathon team won 1st place!
 // =========================================================================
 function splitPrizePool(totalPrize, teamSize) {
@@ -128,8 +131,9 @@ console.log("Payout per hacker: $" + splitPrizePool(6000, 4));`,
     title: 'Zero-Day Production Ship',
     difficulty: 'CodeDay Final Boss',
     tag: 'DUAL FIX',
+    branch: 'release/v1.0-midnight-ship',
     starterCode: `// =========================================================================
-// 🚀 CHALLENGE 4/4: THE MIDNIGHT PRODUCTION SHIP
+// 🚀 CHALLENGE 4/7 [BRANCH: release/v1.0-midnight-ship]
 // TASK: Final CodeDay deployment! Fix the missing semicolon AND the unclosed
 // condition bracket in deployService() to ship cleanly!
 // =========================================================================
@@ -145,7 +149,7 @@ function deployService(projectName, commitHash) {
 
 console.log(deployService("SkillIssueCore", "c0deday"));`,
     solvedCode: `// =========================================================================
-// 🚀 CHALLENGE 4/4: THE MIDNIGHT PRODUCTION SHIP (CORRECT ANSWER)
+// 🚀 CHALLENGE 4/7 [BRANCH: release/v1.0-midnight-ship] (CORRECT ANSWER)
 // TASK: Final CodeDay deployment!
 // =========================================================================
 function deployService(projectName, commitHash) {
@@ -159,8 +163,119 @@ function deployService(projectName, commitHash) {
 }
 
 console.log(deployService("SkillIssueCore", "c0deday"));`,
-    congratulation: '🏆 100% SYNTAX MASTERY! You have conquered every CodeDay challenge! The OS is at total peace.',
+    congratulation: '🏆 Production deployed flawlessly at midnight! All systems go! Trust +15 HP.',
     successOutput: '✨ COMPILED SUCCESSFULLY!\nOutput: DEPLOY SUCCESS: SkillIssueCore [c0deday]',
+  },
+  {
+    id: 5,
+    title: 'Infinite Loop Breaker',
+    difficulty: 'Algorithmic Safeguard',
+    tag: 'LOOP DEFECT',
+    branch: 'hotfix/infinite-loop',
+    starterCode: `// =========================================================================
+// ♾️ CHALLENGE 5/7 [BRANCH: hotfix/infinite-loop]
+// TASK: Fix the infinite while-loop in drainServerQueue()!
+// The loop condition checks (remainingJobs > 0), but remainingJobs is never decremented!
+// Add 'remainingJobs--;' inside the while block and click "▶ RUN CODE"!
+// =========================================================================
+function drainServerQueue(jobCount) {
+  let remainingJobs = jobCount;
+  let processed = 0;
+
+  while (remainingJobs > 0) {
+    processed += 1;
+    // ⚠️ DEFECT: remainingJobs is never decremented! Server CPU melting!
+  }
+
+  return "Drained " + processed + " server jobs cleanly!";
+}
+
+console.log(drainServerQueue(5));`,
+    solvedCode: `// =========================================================================
+// ♾️ CHALLENGE 5/7 [BRANCH: hotfix/infinite-loop] (CORRECT ANSWER)
+// TASK: Fix the infinite while-loop in drainServerQueue()!
+// =========================================================================
+function drainServerQueue(jobCount) {
+  let remainingJobs = jobCount;
+  let processed = 0;
+
+  while (remainingJobs > 0) {
+    processed += 1;
+    remainingJobs--;
+  }
+
+  return "Drained " + processed + " server jobs cleanly!";
+}
+
+console.log(drainServerQueue(5));`,
+    congratulation: '♾️ Infinite loop broken! CPU core temperatures cooled down to 38°C! Trust +15 HP.',
+    successOutput: '✨ COMPILED SUCCESSFULLY!\nOutput: Drained 5 server jobs cleanly!',
+  },
+  {
+    id: 6,
+    title: 'Koramangala Pitch Deck',
+    difficulty: 'Syntax & Strings',
+    tag: 'SEED ROUND',
+    branch: 'feat/ai-pitch-deck',
+    starterCode: `// =========================================================================
+// 🦄 CHALLENGE 6/7 [BRANCH: feat/ai-pitch-deck]
+// TASK: Your Koramangala founder is pitching VCs! Fix the broken string
+// syntax in generateStartupPitch() to close the $5M seed round!
+// =========================================================================
+function generateStartupPitch(valuationMillions, buzzword) {
+  const traction = 100000;
+  // ⚠️ SYNTAX FRACTURE: Missing closing quote on the pitch string below!
+  const pitch = "We are an AI-first " + buzzword + " platform targeting $" + valuationMillions + "M valuation;
+  return pitch + " with " + traction + " waitlist users.";
+}
+
+console.log(generateStartupPitch(10, "Autonomous Agent OS"));`,
+    solvedCode: `// =========================================================================
+// 🦄 CHALLENGE 6/7 [BRANCH: feat/ai-pitch-deck] (CORRECT ANSWER)
+// =========================================================================
+function generateStartupPitch(valuationMillions, buzzword) {
+  const traction = 100000;
+  const pitch = "We are an AI-first " + buzzword + " platform targeting $" + valuationMillions + "M valuation";
+  return pitch + " with " + traction + " waitlist users.";
+}
+
+console.log(generateStartupPitch(10, "Autonomous Agent OS"));`,
+    congratulation: '🦄 Term sheet signed! ₹400 Cr valuation secured! Koramangala tech lead approves! Trust +15 HP.',
+    successOutput: '✨ COMPILED SUCCESSFULLY!\nOutput: We are an AI-first Autonomous Agent OS platform targeting $10M valuation with 100000 waitlist users.',
+  },
+  {
+    id: 7,
+    title: 'Git Merge Conflict',
+    difficulty: 'Git Mastery',
+    tag: 'MERGE CONFLICT',
+    branch: 'chaos/merge-conflict',
+    starterCode: `// =========================================================================
+// 🔀 CHALLENGE 7/7 [BRANCH: chaos/merge-conflict]
+// TASK: Resolve the Git merge conflict markers below!
+// Delete the '<<<<<<< HEAD', '=======', and '>>>>>>>' lines, choose the
+// winning fare logic, and click "▶ RUN CODE"!
+// =========================================================================
+function resolveRidePricing(baseFareKm, distanceKm) {
+<<<<<<< HEAD
+  const total = (baseFareKm * distanceKm) + 30;
+=======
+  const total = (baseFareKm * distanceKm) + 50;
+>>>>>>> auto-anna-branch
+  return "Final Ride Price: ₹" + total;
+}
+
+console.log(resolveRidePricing(20, 8));`,
+    solvedCode: `// =========================================================================
+// 🔀 CHALLENGE 7/7 [BRANCH: chaos/merge-conflict] (CORRECT ANSWER)
+// =========================================================================
+function resolveRidePricing(baseFareKm, distanceKm) {
+  const total = (baseFareKm * distanceKm) + 50;
+  return "Final Ride Price: ₹" + total;
+}
+
+console.log(resolveRidePricing(20, 8));`,
+    congratulation: '🔀 Merge conflict resolved cleanly! Auto-Anna accepted the PR without throwing hands! Trust +15 HP.',
+    successOutput: '✨ COMPILED SUCCESSFULLY!\nOutput: Final Ride Price: ₹210',
   },
 ];
 
@@ -335,7 +450,59 @@ export function validateCode(code) {
     };
   }
 
-  // 3. Check for missing semicolons on let / const declaration lines
+  // 3. Check for unresolved Git merge conflict markers
+  if (code.includes('<<<<<<<') || code.includes('>>>>>>>') || (/^[ \t]*=======[ \t]*$/m.test(code))) {
+    const lines = code.split('\n');
+    const conflictLine = lines.findIndex(l => l.includes('<<<<<<<') || l.includes('>>>>>>>') || l.trim() === '=======');
+    const lineIndex = conflictLine !== -1 ? conflictLine : 0;
+    return {
+      valid: false,
+      errorType: 'GIT_MERGE_CONFLICT',
+      message: 'GitConflict: Unresolved merge conflict markers (<<<<<<<, =======, >>>>>>>) found! Clean up markers before compiling.',
+      penalty: 15,
+      meme: '/memes/this_is_fine.jpg',
+      memeCaption: 'Merge conflict in production. This is fine.',
+      lineIndex,
+      lineNumber: lineIndex + 1,
+    };
+  }
+
+  // 4. Check for infinite while-loop risk in drainServerQueue
+  if (code.includes('while (remainingJobs > 0)') && !code.includes('remainingJobs--') && !code.includes('remainingJobs -=') && !code.includes('remainingJobs = remainingJobs -')) {
+    const lines = code.split('\n');
+    const loopLine = lines.findIndex(l => l.includes('while (remainingJobs > 0)'));
+    const lineIndex = loopLine !== -1 ? loopLine : 0;
+    return {
+      valid: false,
+      errorType: 'INFINITE_LOOP',
+      message: 'RuntimeWarning: Infinite while-loop detected! remainingJobs is never decremented. CPU will freeze!',
+      penalty: 20,
+      meme: '/memes/this_is_fine.jpg',
+      memeCaption: 'Infinite loop. CPU core melting.',
+      lineIndex,
+      lineNumber: lineIndex + 1,
+    };
+  }
+
+  // 5. Check for obvious unterminated string in assignment
+  const stringAssignmentRegex = /(?:const|let)\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*=\s*"[^"\n]*;(?!\s*")/m;
+  if (stringAssignmentRegex.test(code)) {
+    const lines = code.split('\n');
+    const errLine = lines.findIndex(l => stringAssignmentRegex.test(l));
+    const lineIndex = errLine !== -1 ? errLine : 0;
+    return {
+      valid: false,
+      errorType: 'UNTERMINATED_STRING',
+      message: 'SyntaxError: Unterminated string literal. Missing closing quotation mark (") before semicolon!',
+      penalty: 15,
+      meme: '/memes/this_is_fine.jpg',
+      memeCaption: 'Unterminated string literal. This is fine.',
+      lineIndex,
+      lineNumber: lineIndex + 1,
+    };
+  }
+
+  // 6. Check for missing semicolons on let / const declaration lines
   const lines = code.split('\n');
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -388,4 +555,112 @@ export function createClickTracker(threshold = 4, windowMs = 1500) {
     return { isSpam: false, count: clickTimestamps.length };
   };
 }
+
+export const BRANCH_LIST = [
+  {
+    name: 'main',
+    label: 'main (Production Track)',
+    challengeId: 1,
+    tag: 'PRODUCTION',
+    desc: 'The primary hackathon code branch with standard challenges 1-4.',
+  },
+  {
+    name: 'feature/coffee-engine',
+    label: 'feature/coffee-engine',
+    challengeId: 1,
+    tag: 'BRACKETS',
+    desc: 'Challenge 1: Fix the coffee fuel calculator bracket syntax.',
+  },
+  {
+    name: 'refactor/ban-var',
+    label: 'refactor/ban-var',
+    challengeId: 2,
+    tag: 'ES2026',
+    desc: 'Challenge 2: Purge deprecated var statements for modern ES2026.',
+  },
+  {
+    name: 'fix/prize-pool',
+    label: 'fix/prize-pool',
+    challengeId: 3,
+    tag: 'BRACKETS',
+    desc: 'Challenge 3: Fix mismatched bracket in prize splitter.',
+  },
+  {
+    name: 'release/v1.0-midnight-ship',
+    label: 'release/v1.0-midnight-ship',
+    challengeId: 4,
+    tag: 'DEPLOY',
+    desc: 'Challenge 4: Fix missing semicolon & unclosed condition before shipping.',
+  },
+  {
+    name: 'hotfix/infinite-loop',
+    label: 'hotfix/infinite-loop',
+    challengeId: 5,
+    tag: 'ALGORITHM',
+    desc: 'Challenge 5: Break infinite while-loop to save server CPU.',
+  },
+  {
+    name: 'feat/ai-pitch-deck',
+    label: 'feat/ai-pitch-deck',
+    challengeId: 6,
+    tag: 'SYNTAX',
+    desc: 'Challenge 6: Fix broken pitch deck string for Koramangala VCs.',
+  },
+  {
+    name: 'chaos/merge-conflict',
+    label: 'chaos/merge-conflict',
+    challengeId: 7,
+    tag: 'GIT OPS',
+    desc: 'Challenge 7: Resolve Auto-Anna vs Tech Lead Git merge conflict markers.',
+  },
+];
+
+export const OS_THEMES = [
+  {
+    id: 'arcade',
+    name: 'Neo Arcade',
+    subtitle: 'Classic Neo-Brutalist Slate & Yellow',
+    accent: '#FACC15',
+    primary: '#10B981',
+    bg: '#0E0F17',
+    tag: 'DEFAULT',
+  },
+  {
+    id: 'cyberpunk',
+    name: 'Cyberpunk Neon',
+    subtitle: 'Night City Cyan, Hot Pink & Indigo',
+    accent: '#00F0FF',
+    primary: '#FF007F',
+    bg: '#080914',
+    tag: 'NEON',
+  },
+  {
+    id: 'matrix',
+    name: 'Matrix Terminal',
+    subtitle: 'Phosphor Green & Pure Void Black',
+    accent: '#00FF66',
+    primary: '#34D399',
+    bg: '#020703',
+    tag: 'HACKER',
+  },
+  {
+    id: 'vaporwave',
+    name: 'Vaporwave 1984',
+    subtitle: 'Retro Sunset Pink, Teal & Deep Violet',
+    accent: '#FF71CE',
+    primary: '#01CDFE',
+    bg: '#11051D',
+    tag: 'RETRO',
+  },
+  {
+    id: 'coffee',
+    name: 'Filter Coffee',
+    subtitle: 'Warm Bengaluru Roast Espresso & Gold',
+    accent: '#F59E0B',
+    primary: '#D97706',
+    bg: '#120A05',
+    tag: 'NAMMA',
+  },
+];
+
 

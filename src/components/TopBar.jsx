@@ -14,10 +14,25 @@ import {
   VolumeX
 } from 'lucide-react';
 
-export function TopBar({ onJudgeReset }) {
+export function TopBar({ onJudgeReset, activeBranch }) {
   const { state, actions } = useOS();
   const { mood, trust } = state;
   const [isMuted, setIsMuted] = useState(audioManager.isMuted);
+  const [currentBranch, setCurrentBranch] = useState(activeBranch || 'main');
+
+  React.useEffect(() => {
+    if (activeBranch) setCurrentBranch(activeBranch);
+  }, [activeBranch]);
+
+  React.useEffect(() => {
+    const handleChallengeSelect = (e) => {
+      if (e.detail?.branch) {
+        setCurrentBranch(e.detail.branch);
+      }
+    };
+    window.addEventListener('select_challenge', handleChallengeSelect);
+    return () => window.removeEventListener('select_challenge', handleChallengeSelect);
+  }, []);
 
   const handleReset = () => {
     if (onJudgeReset) {
@@ -78,9 +93,9 @@ export function TopBar({ onJudgeReset }) {
 
         {/* Project Breadcrumb / Stage Info */}
         <div className="hidden sm:flex items-center gap-1.5 bg-[#1F2133] px-2.5 py-1 border-2 border-black shadow-[2px_2px_0px_#000] font-mono text-[11px]">
-          <Layers className="w-3.5 h-3.5 text-amber-400" />
+          <GitBranch className="w-3.5 h-3.5 text-emerald-400" />
           <span className="text-slate-400 font-bold">BRANCH:</span>
-          <span className="text-amber-300 font-black">checkout_service.js</span>
+          <span className="text-emerald-300 font-black">{currentBranch}</span>
           {trust < 80 && (
             <span className={`text-[10px] px-1 font-bold ${isBetrayal ? 'bg-rose-500 text-white' : 'bg-amber-400 text-black'}`}>
               UNSAVED

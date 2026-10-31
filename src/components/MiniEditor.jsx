@@ -68,6 +68,44 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
     return () => window.removeEventListener('namma_os_reset', handleFullReset);
   }, []);
 
+  // Listen for challenge selection (e.g. from Git branches or File explorer) & search replace
+  React.useEffect(() => {
+    const handleSelectChallengeEvent = (e) => {
+      const idx = e.detail?.index;
+      if (typeof idx === 'number' && idx >= 0 && idx < CODING_CHALLENGES.length) {
+        setChallengeIndex(idx);
+        setCode(CODING_CHALLENGES[idx].starterCode);
+        setErrorLine(null);
+        setLastError(null);
+        setCongratsBanner(null);
+        setConsoleOutput({
+          status: 'idle',
+          text: `🌿 Checked out Question ${idx + 1}/${CODING_CHALLENGES.length}: "${CODING_CHALLENGES[idx].title}" [${CODING_CHALLENGES[idx].tag}]!\nRead the prompt comment, fix the code, and click "▶ RUN CODE".`,
+          timestamp: Date.now(),
+        });
+      }
+    };
+
+    const handleReplaceTextEvent = (e) => {
+      const { search, replace } = e.detail || {};
+      if (search) {
+        setCode((prevCode) => prevCode.split(search).join(replace || ''));
+        setConsoleOutput({
+          status: 'idle',
+          text: `🔍 Replaced all occurrences of "${search}" with "${replace || ''}" in active buffer.`,
+          timestamp: Date.now(),
+        });
+      }
+    };
+
+    window.addEventListener('select_challenge', handleSelectChallengeEvent);
+    window.addEventListener('editor_replace_text', handleReplaceTextEvent);
+    return () => {
+      window.removeEventListener('select_challenge', handleSelectChallengeEvent);
+      window.removeEventListener('editor_replace_text', handleReplaceTextEvent);
+    };
+  }, []);
+
   const lines = code.split('\n');
 
   const updateCode = (newCode) => {
