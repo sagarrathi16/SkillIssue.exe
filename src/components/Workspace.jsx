@@ -6,7 +6,8 @@ import { Sidebar } from './Sidebar';
 import { MiniEditor } from './MiniEditor';
 import { StatusPanel } from './StatusPanel';
 import { SystemToast } from './SystemToast';
-import { SubtitleBanner } from './SubtitleBanner';
+import { RoastAssistant } from './RoastAssistant';
+import { RecoveryModal } from './RecoveryModal';
 import { AlertOctagon, Flame } from 'lucide-react';
 
 export function Workspace() {
@@ -28,13 +29,11 @@ export function Workspace() {
 
   const handleDismissWarning = () => {
     actions.dismissWarning();
-    // Snapshot the current code so if run again without edits, ignored warning is triggered
     setDismissedCodeSnapshot(currentCode);
   };
 
   const handleCodeChange = (newCode) => {
     setCurrentCode(newCode);
-    // If the user modified the code, clear the snapshot
     if (dismissedCodeSnapshot && newCode.trim() !== dismissedCodeSnapshot.trim()) {
       setDismissedCodeSnapshot(null);
     }
@@ -94,8 +93,11 @@ export function Workspace() {
       {/* 3. System Toast for Compiler / Behaviour Warnings */}
       <SystemToast onDismissWarning={handleDismissWarning} />
 
-      {/* 4. Subtitle Pill at Bottom Center */}
-      <SubtitleBanner />
+      {/* 4. Theatrical Roast Assistant: Typewriter Subtitle Banner + Mascot Avatar + Audio Engine */}
+      <RoastAssistant />
+
+      {/* 5. Recovery Modal Overlay (Above Physics Debris at z-50) */}
+      <RecoveryModal />
     </div>
   );
 }

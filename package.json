@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node test_foundation.js && node test_physics.js"
+    "test": "node test_foundation.js && node test_physics.js && node test_audio_recovery.js"
   },
   "dependencies": {
     "clsx": "^2.1.1",
