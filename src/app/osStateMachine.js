@@ -42,6 +42,7 @@ export const INITIAL_OS_STATE = {
 export const ACTION_TYPES = {
   MISTAKE_DETECTED: 'MISTAKE_DETECTED',
   WARNING_DISMISSED: 'WARNING_DISMISSED',
+  IGNORED_WARNING_RUN: 'IGNORED_WARNING_RUN',
   RAPID_CLICK_DETECTED: 'RAPID_CLICK_DETECTED',
   FORBIDDEN_ACTION: 'FORBIDDEN_ACTION',
   APOLOGY_ATTEMPTED: 'APOLOGY_ATTEMPTED',
@@ -134,9 +135,43 @@ export function osReducer(state, action) {
       };
     }
 
+    case ACTION_TYPES.IGNORED_WARNING_RUN: {
+      const penalty = 25;
+      const nextTrust = Math.max(0, state.trust - penalty);
+      const nextMood = calculateMoodFromTrust(nextTrust, state.mood);
+
+      const eventItem = {
+        type: 'MISTAKE',
+        detail: {
+          mistakeType: 'IGNORED_WARNING',
+          message: 'Ran broken code again after dismissing warning without fixing',
+          ignoredWarningPrior: true,
+        },
+        trustBefore: state.trust,
+        trustAfter: nextTrust,
+        trustDelta: -penalty,
+      };
+
+      return {
+        ...state,
+        trust: nextTrust,
+        mood: nextMood,
+        mistakeCount: state.mistakeCount + 1,
+        ignoredWarnings: state.ignoredWarnings + 1,
+        activeWarning: {
+          id: `warn_${Date.now()}`,
+          mistakeType: 'IGNORED_WARNING',
+          message: 'You dismissed the warning and re-ran the exact same broken code!',
+          timestamp: Date.now(),
+        },
+        isCollapsed: nextTrust <= 34,
+        eventHistory: pushEventHistory(state.eventHistory, eventItem),
+      };
+    }
+
     case ACTION_TYPES.RAPID_CLICK_DETECTED: {
       const { buttonName = 'Toolbar', clickCount = 4 } = action.payload || {};
-      const penalty = 12;
+      const penalty = 15;
       const nextTrust = Math.max(0, state.trust - penalty);
       const nextMood = calculateMoodFromTrust(nextTrust, state.mood);
 
@@ -160,7 +195,7 @@ export function osReducer(state, action) {
 
     case ACTION_TYPES.FORBIDDEN_ACTION: {
       const { actionName = 'PROD_DB_TOUCH' } = action.payload || {};
-      const penalty = 40;
+      const penalty = 30;
       const nextTrust = Math.max(0, state.trust - penalty);
       const nextMood = calculateMoodFromTrust(nextTrust, state.mood);
 
@@ -329,6 +364,10 @@ export function OSProvider({ children }) {
     dispatch({ type: ACTION_TYPES.WARNING_DISMISSED });
   }, []);
 
+  const reportIgnoredWarningRun = useCallback(() => {
+    dispatch({ type: ACTION_TYPES.IGNORED_WARNING_RUN });
+  }, []);
+
   const reportRapidClick = useCallback((buttonName, clickCount) => {
     dispatch({
       type: ACTION_TYPES.RAPID_CLICK_DETECTED,
@@ -379,6 +418,7 @@ export function OSProvider({ children }) {
     actions: {
       reportMistake,
       dismissWarning,
+      reportIgnoredWarningRun,
       reportRapidClick,
       touchForbiddenControl,
       triggerMeltdown,
