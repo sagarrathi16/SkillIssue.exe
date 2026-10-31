@@ -26,7 +26,6 @@ export function StatusPanel() {
 
   return (
     <aside
-      data-physics-id="status-panel-container"
       className={`w-72 lg:w-80 bg-[#070A12] border-l flex flex-col gap-3 p-3 text-xs font-mono select-none overflow-y-auto shrink-0 transition-all duration-300 ${
         isBetrayal
           ? 'border-rose-500/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]'
@@ -162,3 +161,4 @@ export function StatusPanel() {
     </aside>
   );
 }
+

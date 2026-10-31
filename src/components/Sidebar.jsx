@@ -46,7 +46,6 @@ export function Sidebar() {
 
   return (
     <aside
-      data-physics-id="sidebar-container"
       className={`w-14 sm:w-16 bg-[#070A12] border-r flex flex-col items-center justify-between py-3 select-none transition-all duration-300 shrink-0 ${
         isBetrayal
           ? 'border-rose-500/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]'
@@ -129,3 +128,4 @@ export function Sidebar() {
     </aside>
   );
 }
+

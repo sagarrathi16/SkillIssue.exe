@@ -136,3 +136,4 @@ export function createClickTracker(threshold = 4, windowMs = 1500) {
     return { isSpam: false, count: clickTimestamps.length };
   };
 }
+

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useOS, OSMood } from '../app/osStateMachine';
+import { usePhysicsCollapse } from '../physics/PhysicsWorld';
 import { TopBar } from './TopBar';
 import { Sidebar } from './Sidebar';
 import { MiniEditor } from './MiniEditor';
@@ -11,6 +12,15 @@ import { AlertOctagon, Flame } from 'lucide-react';
 export function Workspace() {
   const { state, actions } = useOS();
   const { mood, trust } = state;
+
+  // Coordinate Matter.js rigid-body physics collapse & smooth restoration
+  usePhysicsCollapse({
+    mood,
+    trust,
+    onRecoveryComplete: () => {
+      actions.completeRecovery();
+    },
+  });
 
   // Track the active code buffer and the code at the moment of dismissal
   const [currentCode, setCurrentCode] = useState('');

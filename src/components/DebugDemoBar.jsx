@@ -148,6 +148,16 @@ export function DebugDemoBar() {
           <span>Trigger Boss Fight</span>
         </button>
 
+        {/* Simulate Recovery */}
+        <button
+          onClick={() => actions.startRecovery(85, { note: 'Manual Recovery Trigger' })}
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/40 transition-all active:scale-95 cursor-pointer font-medium"
+          title="Test spring reassembly animation (cubic-bezier restoration)"
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Simulate Recovery</span>
+        </button>
+
         {/* Reset Demo */}
         <button
           onClick={actions.resetDemo}
