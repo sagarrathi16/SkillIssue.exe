@@ -36,3 +36,7 @@ Thumbs.db
 .vite/
 .eslintcache
 
+# Test files & directories
+test/
+tests/
+
