@@ -45,26 +45,26 @@ export function Workspace({ onJudgeReset }) {
 
   return (
     <div
-      className={`flex-1 flex flex-col w-full h-[calc(100vh-42px)] bg-[#0B0F19] text-gray-100 overflow-hidden relative transition-colors duration-500 ${
+      className={`flex-1 flex flex-col w-full h-[calc(100vh-42px)] bg-[#0e0f17] text-gray-100 overflow-hidden relative transition-colors duration-500 ${
         isBetrayal
-          ? 'bg-[#10080B]'
+          ? 'bg-[#1E0D12]'
           : isAnnoyed
-          ? 'bg-[#0E0F16]'
-          : 'bg-[#0B0F19]'
+          ? 'bg-[#14121F]'
+          : 'bg-[#0e0f17]'
       }`}
     >
       {/* Aggressive Crimson Warning Banner for PERSONAL_BETRAYAL */}
       {isBetrayal && (
         <div
           data-physics-id="betrayal-alert-strip"
-          className="w-full bg-rose-600/90 text-white px-4 py-1.5 flex items-center justify-between text-xs font-mono font-bold tracking-wider anim-crimson-glitch select-none z-30 shadow-md"
+          className="w-full bg-[#FF4365] text-white border-b-2 border-black px-4 py-1.5 flex items-center justify-between text-xs font-mono font-black tracking-wider anim-crimson-glitch select-none z-30 shadow-[0_2px_0_#000]"
         >
           <div className="flex items-center gap-2">
-            <Flame className="w-4 h-4 text-amber-200 animate-bounce" />
-            <span>CRITICAL RELATIONSHIP ALERT: Trust degraded to {trust}%. OS patience critically low!</span>
+            <Flame className="w-4 h-4 text-yellow-300 animate-bounce" />
+            <span>⚠️ CRITICAL RELATIONSHIP RAGE: Trust degraded to {trust}%! Auto Anna is losing patience!</span>
           </div>
-          <span className="text-[10px] uppercase bg-black/30 px-2 py-0.5 rounded">
-            Betrayal Mode Active
+          <span className="text-[10px] uppercase bg-black text-[#FACC15] px-2 py-0.5 border border-black font-black">
+            BETRAYAL LEVEL 3
           </span>
         </div>
       )}
@@ -78,7 +78,7 @@ export function Workspace({ onJudgeReset }) {
         <Sidebar />
 
         {/* Central Safe Zone: Mini Code Editor */}
-        <main className="flex-1 flex flex-col p-3 overflow-hidden bg-[#080C15] relative">
+        <main className="flex-1 flex flex-col p-3 overflow-hidden bg-[#0A0B12] relative">
           <MiniEditor
             dismissedCodeSnapshot={dismissedCodeSnapshot}
             onCodeChange={handleCodeChange}

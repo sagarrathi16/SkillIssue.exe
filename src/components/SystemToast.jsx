@@ -27,30 +27,26 @@ export function SystemToast({ onDismissWarning }) {
       }`}
     >
       <div
-        className={`p-3.5 rounded-xl border shadow-2xl backdrop-blur-md flex items-start gap-3 ${
+        className={`p-4 border-2 border-black shadow-[5px_5px_0px_#000] flex items-start gap-3 select-none ${
           isBetrayal
-            ? 'bg-rose-950/90 border-rose-500/80 text-rose-100 shadow-rose-900/50'
-            : 'bg-amber-950/90 border-amber-500/60 text-amber-100 shadow-amber-950/50'
+            ? 'bg-[#FF8080] text-black'
+            : 'bg-[#FDE047] text-black'
         }`}
       >
-        <div className="shrink-0 mt-0.5">
+        <div className="p-2 bg-black text-white border-2 border-black shadow-[2px_2px_0px_#000] shrink-0">
           {isBetrayal ? (
             <ShieldAlert className="w-5 h-5 text-rose-400 animate-pulse" />
           ) : (
-            <AlertTriangle className="w-5 h-5 text-amber-400 animate-bounce" />
+            <AlertTriangle className="w-5 h-5 text-yellow-300 animate-bounce" />
           )}
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2 mb-1">
-            <span
-              className={`text-xs font-mono font-bold tracking-wider uppercase ${
-                isBetrayal ? 'text-rose-400' : 'text-amber-400'
-              }`}
-            >
+          <div className="flex items-center justify-between gap-2 mb-1.5">
+            <span className="bg-black text-[#FACC15] px-2 py-0.5 font-black text-[10px] uppercase font-mono tracking-wider">
               {activeWarning.mistakeType?.replace(/_/g, ' ') || 'SYSTEM WARNING'}
             </span>
-            <span className="text-[10px] font-mono text-slate-400">
+            <span className="text-[10px] font-mono font-bold text-black opacity-80">
               {new Date(activeWarning.timestamp).toLocaleTimeString([], {
                 hour12: false,
                 minute: '2-digit',
@@ -59,23 +55,19 @@ export function SystemToast({ onDismissWarning }) {
             </span>
           </div>
 
-          <p className="text-xs font-sans text-slate-200 leading-snug">
+          <p className="text-xs font-bold text-black leading-snug font-mono">
             {activeWarning.message}
           </p>
 
-          <div className="mt-2 text-[11px] font-mono text-slate-400 flex items-center justify-between">
-            <span className="text-[10px] text-amber-300/80 italic">
-              Fix code before running again
+          <div className="mt-3 text-xs font-mono flex items-center justify-between gap-2">
+            <span className="text-[10px] text-black font-extrabold uppercase bg-black/10 px-1.5 py-0.5">
+              ⚠️ DO NOT RE-RUN UNMODIFIED
             </span>
             <button
               onClick={handleDismiss}
-              className={`flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium border transition-all active:scale-95 cursor-pointer ${
-                isBetrayal
-                  ? 'bg-rose-900/50 hover:bg-rose-800 text-rose-200 border-rose-600'
-                  : 'bg-amber-900/40 hover:bg-amber-800/60 text-amber-200 border-amber-600/50'
-              }`}
+              className="neo-btn bg-black text-white px-3 py-1 font-black text-xs flex items-center gap-1"
             >
-              <span>Dismiss</span>
+              <span>DISMISS</span>
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -84,4 +76,3 @@ export function SystemToast({ onDismissWarning }) {
     </div>
   );
 }
-

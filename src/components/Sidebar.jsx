@@ -10,7 +10,7 @@ import {
   Settings, 
   Flame, 
   AlertOctagon,
-  Cpu
+  Skull
 } from 'lucide-react';
 
 export function Sidebar() {
@@ -37,27 +37,27 @@ export function Sidebar() {
   const isBetrayal = mood === OSMood.PERSONAL_BETRAYAL;
 
   const NAV_ITEMS = [
-    { id: 'files', label: 'Explorer', icon: Files },
-    { id: 'search', label: 'Global Search', icon: Search },
-    { id: 'source-control', label: 'Git Sync', icon: GitPullRequest },
-    { id: 'debug', label: 'Run & Debug', icon: Bug },
-    { id: 'extensions', label: 'Namma Plugins', icon: Boxes },
+    { id: 'files', label: 'Files', icon: Files, color: 'hover:bg-amber-400' },
+    { id: 'search', label: 'Search', icon: Search, color: 'hover:bg-cyan-400' },
+    { id: 'git', label: 'Git Sync', icon: GitPullRequest, color: 'hover:bg-emerald-400' },
+    { id: 'debug', label: 'Debugger', icon: Bug, color: 'hover:bg-purple-400' },
+    { id: 'plugins', label: 'Add-ons', icon: Boxes, color: 'hover:bg-rose-400' },
   ];
 
   return (
     <aside
-      className={`w-14 sm:w-16 bg-[#070A12] border-r flex flex-col items-center justify-between py-3 select-none transition-all duration-300 shrink-0 ${
+      className={`w-14 sm:w-16 bg-[#12131F] border-r-2 border-black flex flex-col items-center justify-between py-3 select-none transition-colors duration-300 shrink-0 ${
         isBetrayal
-          ? 'border-rose-500/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]'
+          ? 'bg-[#251015]'
           : isAnnoyed
-          ? 'border-amber-500/40'
-          : 'border-slate-800'
+          ? 'bg-[#191624]'
+          : 'bg-[#12131F]'
       }`}
     >
-      {/* 1. Main Tool Navigation Icons */}
+      {/* 1. Main Tool Navigation Icons (Cartridge Rack) */}
       <div 
         data-physics-id="sidebar-nav-icons"
-        className="flex flex-col items-center gap-3 w-full"
+        className="flex flex-col items-center gap-2.5 w-full px-2"
       >
         {NAV_ITEMS.map((item, idx) => {
           const Icon = item.icon;
@@ -72,22 +72,18 @@ export function Sidebar() {
             <button
               key={item.id}
               onClick={() => handleTabClick(item.id)}
-              className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all active:scale-90 cursor-pointer relative group ${tiltClass} ${
+              className={`w-10 h-10 border-2 border-black flex items-center justify-center transition-all cursor-pointer relative group ${tiltClass} ${
                 isActive
-                  ? isBetrayal
-                    ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                    : isAnnoyed
-                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                    : 'bg-slate-800 text-emerald-400 border border-slate-700'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/80'
+                  ? 'bg-[#FACC15] text-black shadow-[2px_2px_0px_#000]'
+                  : 'bg-[#1E2032] text-slate-300 shadow-[2px_2px_0px_#000] hover:text-black ' + item.color
               }`}
-              title={`${item.label} (Spam clicking will irritate the OS)`}
+              title={`${item.label} (Spam clicking triggers penalty!)`}
             >
-              <Icon className="w-5 h-5" />
+              <Icon className="w-5 h-5 stroke-[2.5]" />
 
-              {/* Tooltip */}
-              <div className="absolute left-14 ml-2 px-2 py-1 rounded bg-slate-900 border border-slate-700 text-slate-200 text-[11px] font-mono whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-lg">
-                {item.label}
+              {/* Neo Tooltip */}
+              <div className="absolute left-14 ml-1 px-2 py-1 bg-black text-[#FACC15] border-2 border-[#FACC15] font-mono text-[10px] font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-[2px_2px_0px_#000]">
+                {item.label.toUpperCase()}
               </div>
             </button>
           );
@@ -95,22 +91,22 @@ export function Sidebar() {
       </div>
 
       {/* 2. Bottom Controls + Forbidden Prod DB Button */}
-      <div className="flex flex-col items-center gap-3 w-full px-1">
-        {/* The Forbidden "Drop Prod DB" Button */}
-        <div
+      <div className="flex flex-col items-center gap-3 w-full px-2">
+        {/* The Forbidden "Drop Prod DB" Button (Arcade Hazard Style) */}
+        <div 
           data-physics-id="sidebar-forbidden-btn"
           className="w-full flex justify-center"
         >
           <button
             onClick={handleDropProdDB}
-            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-rose-600 to-red-700 hover:from-rose-500 hover:to-red-600 text-white flex flex-col items-center justify-center gap-0.5 shadow-lg shadow-rose-950/60 border border-rose-400/50 transition-all active:scale-90 cursor-pointer animate-pulse group ${
+            className={`w-11 h-12 bg-rose-500 hover:bg-rose-400 text-white border-2 border-black flex flex-col items-center justify-center gap-0.5 shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] cursor-pointer animate-pulse group ${
               isBetrayal ? 'mood-betrayal-tilted-right anim-personal-betrayal' : ''
             }`}
-            title="CRITICAL FORBIDDEN CONTROL: Drop Prod DB (Do Not Touch!)"
+            title="DANGER! Do Not Touch (Drops Prod DB & destroys trust!)"
           >
-            <Flame className="w-5 h-5 text-amber-200 group-hover:scale-110 transition-transform" />
-            <span className="text-[7px] font-mono font-black uppercase tracking-tighter text-amber-100">
-              PROD DB
+            <Skull className="w-4 h-4 text-yellow-300" />
+            <span className="text-[7px] font-mono font-black uppercase text-white tracking-tighter">
+              DROP DB
             </span>
           </button>
         </div>
@@ -119,13 +115,12 @@ export function Sidebar() {
         <button
           data-physics-id="sidebar-settings-icon"
           onClick={() => handleTabClick('settings')}
-          className="w-10 h-10 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-300 hover:bg-slate-900 transition-all cursor-pointer"
+          className="w-9 h-9 border-2 border-black bg-[#1B1D2E] text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center shadow-[1px_1px_0px_#000] cursor-pointer"
           title="OS Settings"
         >
-          <Settings className="w-4 h-4" />
+          <Settings className="w-4 h-4 stroke-[2]" />
         </button>
       </div>
     </aside>
   );
 }
-

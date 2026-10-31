@@ -11,9 +11,8 @@ import {
   CheckCircle2, 
   AlertOctagon, 
   RotateCcw, 
-  Activity, 
-  Navigation,
-  Compass
+  Gamepad2,
+  Coins
 } from 'lucide-react';
 
 export function AutoNegotiation({ onNegotiationSuccess }) {
@@ -24,7 +23,6 @@ export function AutoNegotiation({ onNegotiationSuccess }) {
   const currentStageConfig = NEGOTIATION_STAGES[stage] || NEGOTIATION_STAGES[1];
 
   const handleSelectChoice = (choice) => {
-    // Play auto horn procedural sfx on selection
     audioManager.playAutoHorn();
 
     dispatch({ type: 'SELECT_CHOICE', payload: choice });
@@ -50,81 +48,74 @@ export function AutoNegotiation({ onNegotiationSuccess }) {
     dispatch({ type: 'RETRY' });
   };
 
-  const getMoodColor = (mood) => {
-    if (mood >= 75) return 'text-emerald-400 bg-emerald-500';
-    if (mood >= 35) return 'text-amber-400 bg-amber-500';
-    return 'text-rose-400 bg-rose-500';
-  };
-
   return (
-    <div className="flex flex-col gap-4 text-xs font-mono">
-      {/* Route & HUD Header */}
-      <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between gap-3 shadow-inner">
+    <div className="flex flex-col gap-3.5 text-xs font-mono">
+      {/* Route & Arcade Boss HUD Header */}
+      <div className="p-3 bg-[#12131F] border-2 border-black shadow-[3px_3px_0px_#000] flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-2xl shrink-0">
+          <div className="w-12 h-12 bg-[#FACC15] border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-center text-3xl shrink-0">
             🛺
           </div>
           <div>
-            <div className="font-bold text-slate-100 flex items-center gap-2">
-              <span>Manjunath (Silk Board Auto Boss)</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-semibold">
-                6:30 PM Rain Surge
+            <div className="font-black text-white flex items-center gap-2 text-xs sm:text-sm">
+              <span>MANJUNATH (AUTO BOSS)</span>
+              <span className="text-[10px] px-1.5 py-0.2 bg-rose-500 text-white font-black border border-black uppercase">
+                6:30 PM RAIN
               </span>
             </div>
-            <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
-              <span className="flex items-center gap-1 text-sky-400 font-medium">
-                <CloudRain className="w-3.5 h-3.5" /> Silk Board → Indiranagar
-              </span>
+            <div className="text-[11px] text-sky-300 font-bold flex items-center gap-1 mt-0.5">
+              <CloudRain className="w-3.5 h-3.5 text-sky-400" />
+              <span>Silk Board → Indiranagar</span>
             </div>
           </div>
         </div>
 
-        {/* Dynamic Telemetry Meters */}
-        <div className="flex items-center gap-4 text-right">
-          {/* Driver Mood */}
+        {/* Dynamic Boss HUD Meters */}
+        <div className="flex items-center gap-3 text-right">
+          {/* Driver Patience Meter */}
           <div className="flex flex-col items-end">
-            <span className="text-[10px] text-slate-500 uppercase">Driver Mood</span>
+            <span className="text-[9px] text-slate-400 font-black uppercase">Driver Mood</span>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <div className="w-14 h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div className="w-16 h-3 bg-black border border-black p-0.5">
                 <div
-                  className={`h-full transition-all duration-300 ${getMoodColor(driverMood).split(' ')[1]}`}
+                  className={`h-full transition-all duration-300 ${
+                    driverMood >= 75 ? 'bg-emerald-400' : driverMood >= 35 ? 'bg-amber-400' : 'bg-rose-500'
+                  }`}
                   style={{ width: `${driverMood}%` }}
                 />
               </div>
-              <span className={`font-bold ${getMoodColor(driverMood).split(' ')[0]}`}>
+              <span className="font-black text-xs text-white">
                 {driverMood}%
               </span>
             </div>
           </div>
 
-          {/* Asked Fare */}
-          <div className="flex flex-col items-end border-l border-slate-800 pl-3">
-            <span className="text-[10px] text-slate-500 uppercase">Fare Asked</span>
-            <span className="text-xl font-extrabold text-amber-400">
+          {/* Asked Fare Box */}
+          <div className="flex flex-col items-end border-l-2 border-black pl-3">
+            <span className="text-[9px] text-slate-400 font-black uppercase">Fare Demand</span>
+            <div className="bg-[#FACC15] text-black font-black text-base px-2 py-0.5 border border-black shadow-[1px_1px_0px_#000]">
               ₹{askedFare}
-            </span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Scrolling Dialogue History */}
-      <div className="bg-[#05070D] border border-slate-800 rounded-xl p-3.5 flex flex-col gap-2.5 max-h-52 overflow-y-auto shadow-inner">
+      {/* Scrolling RPG Dialogue History */}
+      <div className="bg-[#0E0F1A] border-2 border-black shadow-[2px_2px_0px_#000] p-3 flex flex-col gap-2 max-h-48 overflow-y-auto">
         {history.map((item, idx) => (
           <div
             key={idx}
-            className={`flex flex-col max-w-[88%] p-2.5 rounded-xl text-xs leading-relaxed ${
+            className={`flex flex-col max-w-[90%] p-2 border-2 border-black text-xs leading-relaxed shadow-[2px_2px_0px_#000] ${
               item.speaker === 'user'
-                ? 'self-end bg-emerald-950/70 border border-emerald-500/40 text-emerald-200'
-                : 'self-start bg-slate-900/90 border border-slate-700/80 text-slate-200'
+                ? 'self-end bg-[#38BDF8] text-black font-bold'
+                : 'self-start bg-[#FACC15] text-black font-bold'
             }`}
           >
-            <div className="flex items-center justify-between gap-2 mb-0.5">
-              <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">
-                {item.speaker === 'user' ? 'You' : 'Auto Driver (Manjunath)'}
-              </span>
+            <div className="flex items-center justify-between gap-2 mb-0.5 text-[9px] uppercase font-black tracking-wider text-black/75">
+              <span>{item.speaker === 'user' ? 'YOU' : 'AUTO ANNA (MANJUNATH)'}</span>
               {item.kannadaGlossary && (
-                <span className="text-[9px] text-amber-300/80 font-normal italic">
-                  [{item.kannadaGlossary}]
+                <span className="bg-black text-white px-1 font-normal">
+                  {item.kannadaGlossary}
                 </span>
               )}
             </div>
@@ -135,38 +126,38 @@ export function AutoNegotiation({ onNegotiationSuccess }) {
 
       {/* Outcome States or Stage Choices */}
       {status === 'WON' ? (
-        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/40 text-emerald-300 flex items-center gap-3 animate-pulse">
-          <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" />
+        <div className="p-4 bg-[#10B981] border-2 border-black shadow-[4px_4px_0px_#000] text-black flex items-center gap-3">
+          <CheckCircle2 className="w-8 h-8 text-black shrink-0" />
           <div>
-            <div className="font-bold text-sm">Ride Confirmed! Indiranagar Non-Stop!</div>
-            <div className="text-[11px] text-slate-300 mt-0.5">
-              Settled at ₹{askedFare}. Auto Boss respected your authentic Bengaluru negotiation. Restoring workspace...
+            <div className="font-black text-sm uppercase">🏆 RIDE LOCKED IN! INDIRANAGAR NON-STOP!</div>
+            <div className="text-xs font-bold mt-0.5">
+              Settled at ₹{askedFare}. Auto Boss respected your local Bengaluru bargaining. Spring reassembling workspace...
             </div>
           </div>
         </div>
       ) : status === 'LOST' ? (
-        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/40 flex flex-col gap-3">
-          <div className="flex items-center gap-2.5 text-rose-300 font-bold">
-            <AlertOctagon className="w-5 h-5 text-rose-400 shrink-0" />
-            <span>Driver sped away in the rain! Mood dropped to 0%.</span>
+        <div className="p-4 bg-[#FF4365] text-white border-2 border-black shadow-[4px_4px_0px_#000] flex flex-col gap-2.5">
+          <div className="flex items-center gap-2 font-black text-sm">
+            <AlertOctagon className="w-5 h-5 text-yellow-300 shrink-0" />
+            <span>DRIVER SPED AWAY IN THE RAIN! (MOOD: 0%)</span>
           </div>
-          <p className="text-[11px] text-slate-400 leading-relaxed">
-            Threatening to book Uber or absurd lowballs won't work during 6:30 PM Silk Board monsoon traffic!
+          <p className="text-xs font-bold text-white/90">
+            Threatening with Ola/Uber won't work in Silk Board monsoon traffic!
           </p>
           <button
             onClick={handleRetry}
-            className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 transition cursor-pointer font-bold active:scale-95 shadow"
+            className="neo-btn bg-black text-white hover:bg-slate-900 py-2 px-4 flex items-center justify-center gap-2 font-black text-xs"
           >
             <RotateCcw className="w-4 h-4" />
-            <span>Hail Another Auto in the Rain (Retry)</span>
+            <span>HAIL ANOTHER AUTO (RETRY)</span>
           </button>
         </div>
       ) : (
-        /* Active Dialogue Choices (3 per stage) */
+        /* Active Dialogue Choices (3 per stage - Neo Arcade Action Buttons) */
         <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-            <span>Stage {stage} of 4: Choose Your Bargaining Response</span>
-            <span className="text-amber-400/80">Goal: Mood ≥ 80%</span>
+          <div className="flex items-center justify-between text-[10px] text-amber-300 font-black uppercase tracking-wider">
+            <span>Stage {stage} of 4: Select Your Dialogue Action</span>
+            <span className="bg-[#181926] px-1.5 py-0.5 border border-black">Target: Mood ≥ 80%</span>
           </div>
 
           <div className="grid grid-cols-1 gap-2">
@@ -174,12 +165,12 @@ export function AutoNegotiation({ onNegotiationSuccess }) {
               <button
                 key={choice.id}
                 onClick={() => handleSelectChoice(choice)}
-                className="p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-slate-500 text-left transition-all cursor-pointer active:scale-98 group flex flex-col gap-1 shadow-sm"
+                className="neo-btn bg-[#1E2032] hover:bg-[#FACC15] text-white hover:text-black p-3 text-left transition-all flex flex-col gap-1 shadow-[2px_2px_0px_#000]"
               >
-                <div className="font-bold text-slate-100 group-hover:text-amber-300 transition-colors">
+                <div className="font-black text-xs">
                   {choice.label}
                 </div>
-                <div className="text-[10px] text-slate-400">
+                <div className="text-[10px] font-medium opacity-80">
                   {choice.subtitle}
                 </div>
               </button>

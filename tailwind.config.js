@@ -16,7 +16,17 @@ export default {
       },
       fontFamily: {
         mono: ['Fira Code', 'JetBrains Mono', 'Courier New', 'monospace'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
+        pixel: ['"Press Start 2P"', 'monospace'],
+        display: ['Space Grotesk', 'sans-serif'],
+      },
+      boxShadow: {
+        'neo': '3px 3px 0px #000000',
+        'neo-lg': '5px 5px 0px #000000',
+        'neo-xl': '8px 8px 0px #000000',
+        'neo-yellow': '4px 4px 0px #FACC15',
+        'neo-rose': '4px 4px 0px #F43F5E',
+        'neo-cyan': '4px 4px 0px #06B6D4',
       },
       animation: {
         'tremor-mild': 'tremorMild 0.4s ease-in-out infinite',

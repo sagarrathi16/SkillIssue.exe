@@ -35,7 +35,7 @@ function OSContainer() {
   }, [actions]);
 
   return (
-    <div className="w-screen h-screen flex flex-col bg-[#0B0F19] text-gray-100 overflow-hidden select-none">
+    <div className="w-screen h-screen flex flex-col bg-[#0e0f17] text-gray-100 overflow-hidden select-none font-sans">
       {/* 1. Top Debug & Demo Bar */}
       <DebugDemoBar onJudgeReset={handleFullJudgeReset} />
 

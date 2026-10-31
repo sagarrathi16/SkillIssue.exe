@@ -8,7 +8,9 @@ import {
   Zap, 
   ShieldAlert, 
   MousePointerClick,
-  Sparkles
+  Sparkles,
+  Gamepad2,
+  Heart
 } from 'lucide-react';
 
 const SAMPLE_MISTAKES = [
@@ -44,149 +46,131 @@ export function DebugDemoBar({ onJudgeReset }) {
     actions.touchForbiddenControl('PROD_DB_PRIMARY_DROP');
   };
 
-  // Color mapper for moods
+  // Neo-brutalist badge colors
   const getMoodBadge = (mood) => {
     switch (mood) {
       case OSMood.CALM:
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+        return 'bg-emerald-400 text-black';
       case OSMood.SLIGHTLY_ANNOYED:
-        return 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+        return 'bg-amber-400 text-black';
       case OSMood.PERSONAL_BETRAYAL:
-        return 'bg-orange-500/10 text-orange-400 border-orange-500/30';
+        return 'bg-orange-500 text-black';
       case OSMood.MENTAL_BREAKDOWN:
-        return 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse font-semibold';
+        return 'bg-rose-500 text-white animate-pulse';
       case OSMood.BENGALURU_BOSS_FIGHT:
-        return 'bg-purple-500/20 text-purple-300 border-purple-500/50 font-bold';
+        return 'bg-purple-500 text-white animate-bounce';
       case OSMood.RECOVERY:
-        return 'bg-cyan-500/10 text-cyan-300 border-cyan-500/40 animate-pulse';
+        return 'bg-cyan-400 text-black';
       default:
-        return 'bg-gray-800 text-gray-300 border-gray-700';
+        return 'bg-gray-400 text-black';
     }
   };
 
-  // Trust bar fill color
-  const getTrustBarColor = (trust) => {
-    if (trust > 65) return 'bg-emerald-500';
-    if (trust > 35) return 'bg-amber-500';
-    return 'bg-rose-500';
+  // Hearts calculation
+  const getHearts = (trust) => {
+    const count = Math.ceil(trust / 20);
+    return Array.from({ length: 5 }, (_, i) => i < count);
   };
 
   return (
-    <header className="w-full bg-[#070A12]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-xs z-50 select-none">
+    <header className="w-full bg-[#181924] border-b-2 border-black px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-xs z-50 select-none shadow-[0_2px_0_#000]">
       {/* Brand & Telemetry Badge */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 font-mono font-bold tracking-wider text-slate-200">
-          <span className="text-base">🛺</span>
-          <span className="text-emerald-400">NAMMA FRAGILE OS</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700 font-normal">
-            DEMO CONTROLS
+        <div className="flex items-center gap-2 bg-[#FACC15] text-black font-black px-2.5 py-1 border-2 border-black shadow-[2px_2px_0px_#000] tracking-wider uppercase">
+          <span className="text-sm">🛺</span>
+          <span>NAMMA OS</span>
+          <span className="bg-black text-[#FACC15] text-[10px] px-1 py-0.2 rounded font-mono">
+            ARCADE ED.
           </span>
         </div>
 
-        {/* Live Trust Bar */}
-        <div className="flex items-center gap-2 bg-slate-900/90 px-2.5 py-1 rounded border border-slate-800 font-mono">
-          <span className="text-slate-400">Trust:</span>
-          <div className="w-20 h-2 bg-slate-800 rounded-full overflow-hidden">
-            <div
-              className={`h-full transition-all duration-300 ${getTrustBarColor(state.trust)}`}
-              style={{ width: `${Math.max(0, Math.min(100, state.trust))}%` }}
-            />
+        {/* Hearts & Trust Counter */}
+        <div className="flex items-center gap-2 bg-[#232538] px-3 py-1 border-2 border-black shadow-[2px_2px_0px_#000] font-mono">
+          <div className="flex items-center gap-0.5 text-rose-500">
+            {getHearts(state.trust).map((isFilled, idx) => (
+              <span key={idx} className={isFilled ? 'text-rose-500' : 'text-slate-600'}>
+                {isFilled ? '❤️' : '🖤'}
+              </span>
+            ))}
           </div>
-          <span className={`font-bold ${state.trust <= 34 ? 'text-rose-400' : 'text-slate-200'}`}>
+          <span className="text-slate-300 font-bold ml-1">HP:</span>
+          <span className={`font-black text-sm ${state.trust <= 34 ? 'text-rose-400 animate-pulse' : 'text-emerald-400'}`}>
             {state.trust}%
           </span>
         </div>
 
-        {/* Mood Tag */}
-        <div className={`px-2 py-0.5 rounded border text-[11px] font-mono flex items-center gap-1.5 ${getMoodBadge(state.mood)}`}>
-          <span className="w-1.5 h-1.5 rounded-full bg-current inline-block animate-ping" />
-          <span>{state.mood.replace('_', ' ')}</span>
+        {/* Mood Badge */}
+        <div className={`px-2.5 py-1 border-2 border-black shadow-[2px_2px_0px_#000] font-black uppercase text-[11px] flex items-center gap-1.5 ${getMoodBadge(state.mood)}`}>
+          <Gamepad2 className="w-3.5 h-3.5" />
+          <span>{state.mood.replace(/_/g, ' ')}</span>
         </div>
       </div>
 
-      {/* Quick-Trigger Debug Action Buttons */}
+      {/* Quick-Trigger Debug Action Buttons (Neo Arcade Style) */}
       <div className="flex items-center gap-2 flex-wrap">
         {/* Force Mistake */}
         <button
           onClick={handleForceMistake}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition-all active:scale-95 cursor-pointer font-medium"
-          title="Inject a deterministic JavaScript error"
+          className="neo-btn bg-amber-400 text-black px-2.5 py-1 text-xs flex items-center gap-1"
+          title="Inject syntax error (-15 HP)"
         >
           <AlertTriangle className="w-3.5 h-3.5" />
-          <span>Force Mistake</span>
+          <span>Mistake</span>
         </button>
 
         {/* Spam Click */}
         <button
           onClick={handleSimulateSpam}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 border border-blue-500/30 transition-all active:scale-95 cursor-pointer font-medium"
-          title="Simulate 5 rapid clicks on a button"
+          className="neo-btn bg-cyan-400 text-black px-2.5 py-1 text-xs flex items-center gap-1"
+          title="Simulate rapid clicks (-15 HP)"
         >
           <MousePointerClick className="w-3.5 h-3.5" />
-          <span>Simulate Spam</span>
+          <span>Spam Click</span>
         </button>
 
         {/* Touch Prod DB */}
         <button
           onClick={handleTouchProdDB}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 transition-all active:scale-95 cursor-pointer font-medium"
-          title="Simulate clicking the forbidden Prod DB button"
+          className="neo-btn bg-rose-500 text-white px-2.5 py-1 text-xs flex items-center gap-1"
+          title="Click forbidden button (-30 HP)"
         >
           <ShieldAlert className="w-3.5 h-3.5" />
-          <span>Touch Prod DB</span>
+          <span>Drop DB</span>
         </button>
 
         {/* Trigger Meltdown */}
         <button
           onClick={actions.triggerMeltdown}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-orange-600/20 hover:bg-orange-600/30 text-orange-300 border border-orange-500/40 transition-all active:scale-95 cursor-pointer font-medium"
-          title="Instantly trigger mental breakdown (Trust = 20)"
+          className="neo-btn bg-orange-500 text-black px-2.5 py-1 text-xs flex items-center gap-1"
+          title="Trigger 2D physics collapse"
         >
           <Flame className="w-3.5 h-3.5" />
-          <span>Trigger Meltdown</span>
+          <span>Meltdown</span>
         </button>
 
         {/* Trigger Boss Fight */}
         <button
           onClick={actions.triggerBossFight}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/40 transition-all active:scale-95 cursor-pointer font-medium"
-          title="Instantly trigger Bengaluru Auto Boss Fight (Trust = 0)"
+          className="neo-btn bg-purple-400 text-black px-2.5 py-1 text-xs flex items-center gap-1"
+          title="Trigger Auto Rickshaw Boss Fight"
         >
           <Skull className="w-3.5 h-3.5" />
-          <span>Trigger Boss Fight</span>
-        </button>
-
-        {/* Simulate Recovery */}
-        <button
-          onClick={() => actions.startRecovery(85, { note: 'Manual Recovery Trigger' })}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/40 transition-all active:scale-95 cursor-pointer font-medium"
-          title="Test spring reassembly animation (cubic-bezier restoration)"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Simulate Recovery</span>
+          <span>Boss Fight</span>
         </button>
 
         {/* Reset for Next Judge */}
         <button
           onClick={handleReset}
-          className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400/50 transition-all active:scale-95 cursor-pointer font-bold shadow-md shadow-emerald-950/60"
-          title="Instant <100ms Reset for Next Judge (Shift + Escape)"
+          className="neo-btn bg-emerald-400 text-black px-3 py-1 text-xs font-black flex items-center gap-1.5 shadow-[3px_3px_0px_#000]"
+          title="Instant Reset for Next Judge (Shift + Escape)"
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-200" />
-          <span>Reset for Next Judge</span>
-          <kbd className="hidden xl:inline-block px-1 py-0.2 rounded bg-emerald-800 text-[10px] text-emerald-100 border border-emerald-400/40">
+          <Sparkles className="w-3.5 h-3.5 fill-black" />
+          <span>RESET JUDGE</span>
+          <kbd className="hidden xl:inline-block px-1 rounded bg-black text-[#4ADE80] text-[10px] font-mono">
             Shift+Esc
           </kbd>
         </button>
-
-        {/* Hotkey Hint */}
-        <div className="hidden lg:flex items-center gap-1 text-[10px] text-slate-500 font-mono pl-1">
-          <kbd className="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-400">~</kbd>
-          <span>or</span>
-          <kbd className="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-400">Ctrl+Shift+K</kbd>
-        </div>
       </div>
     </header>
   );
 }
-

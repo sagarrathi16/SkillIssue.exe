@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useOS, OSMood } from '../app/osStateMachine';
 import { validateCode, DEFAULT_CODE_SNIPPET } from '../logic/mistakeDetector';
-import { Play, CheckCircle2, AlertTriangle, Terminal, Code2, RefreshCw } from 'lucide-react';
+import { Play, CheckCircle2, AlertTriangle, Terminal, Code2, Sparkles } from 'lucide-react';
 
 const SAMPLE_CLEAN_CODE = `// Namma Fragile OS — Bengaluru Traffic Routing (Fixed)
 function calculateSilkBoardDelay(distanceKm) {
@@ -33,7 +33,7 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
   const [code, setCode] = useState(DEFAULT_CODE_SNIPPET);
   const [consoleOutput, setConsoleOutput] = useState({
     status: 'idle',
-    text: 'Terminal ready. Click "Run / Compile" to evaluate JavaScript buffer.',
+    text: '👾 Arcade Compiler ready. Click "▶ RUN CODE" to evaluate JavaScript buffer.',
     timestamp: null,
   });
 
@@ -43,7 +43,7 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
       setCode(DEFAULT_CODE_SNIPPET);
       setConsoleOutput({
         status: 'idle',
-        text: 'Terminal ready. Click "Run / Compile" to evaluate JavaScript buffer.',
+        text: '👾 Arcade Compiler ready. Click "▶ RUN CODE" to evaluate JavaScript buffer.',
         timestamp: null,
       });
     };
@@ -60,12 +60,11 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
 
   const handleRunCode = () => {
     // 1. Check for Ignored Warning Trigger
-    // If the user previously dismissed a warning and re-ran without modifying the code buffer
     if (dismissedCodeSnapshot && dismissedCodeSnapshot.trim() === code.trim()) {
       actions.reportIgnoredWarningRun();
       setConsoleOutput({
         status: 'error',
-        text: 'IgnoredWarningException: Code re-executed without addressing prior compiler warning! Koramangala founder behavior detected.',
+        text: '🚨 IGNORED WARNING: You re-ran without fixing the compiler warning! Koramangala founder behavior detected (-25 HP).',
         timestamp: Date.now(),
       });
       if (onClearDismissedCode) onClearDismissedCode();
@@ -79,13 +78,13 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
       actions.reportMistake(result.errorType, result.message, result.penalty);
       setConsoleOutput({
         status: 'error',
-        text: `${result.errorType}: ${result.message}`,
+        text: `❌ COMPILE ERROR [${result.errorType}]:\n${result.message} (-${result.penalty} HP)`,
         timestamp: Date.now(),
       });
     } else {
       setConsoleOutput({
         status: 'success',
-        text: `✓ Build succeeded [2026-10-31] — Zero syntax anomalies detected.\nOutput: Expected Silk Board Delay: 146.5 mins`,
+        text: `✨ BUILD SUCCESS! Zero syntax anomalies detected.\nOutput: Expected Silk Board Delay: 146.5 mins`,
         timestamp: Date.now(),
       });
       if (onClearDismissedCode) onClearDismissedCode();
@@ -93,7 +92,6 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
   };
 
   const handleKeyDown = (e) => {
-    // Allow Tab key indentation
     if (e.key === 'Tab') {
       e.preventDefault();
       const start = e.target.selectionStart;
@@ -104,6 +102,11 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
         e.target.selectionStart = e.target.selectionEnd = start + 2;
       }, 0);
     }
+    // Quick run with Ctrl + Enter
+    if (e.ctrlKey && e.key === 'Enter') {
+      e.preventDefault();
+      handleRunCode();
+    }
   };
 
   const isAnnoyed = mood === OSMood.SLIGHTLY_ANNOYED;
@@ -112,41 +115,48 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
   return (
     <div
       // SACRED SAFE ZONE: NO data-physics-id here! This editor never falls.
-      className={`flex-1 flex flex-col bg-[#070A12] border rounded-xl overflow-hidden shadow-2xl transition-all duration-300 relative ${
+      className={`flex-1 flex flex-col bg-[#13141F] border-2 border-black shadow-[4px_4px_0px_#000] overflow-hidden transition-all duration-300 relative ${
         isBetrayal
-          ? 'border-rose-500/40 shadow-rose-950/20'
+          ? 'border-rose-500 shadow-[4px_4px_0px_#F43F5E]'
           : isAnnoyed
-          ? 'border-amber-500/30'
-          : 'border-slate-800'
+          ? 'border-amber-400 shadow-[4px_4px_0px_#FACC15]'
+          : 'border-black'
       }`}
     >
       {/* Editor Top Bar & Controls */}
-      <div className="bg-[#0B0F19] border-b border-slate-800 px-4 py-2 flex items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2 font-mono">
-          <Code2 className="w-4 h-4 text-emerald-400" />
-          <span className="text-slate-300 font-semibold">bengaluru_routing.js</span>
-          <span className="text-[10px] text-slate-500 hidden sm:inline">(JavaScript ES2024)</span>
+      <div className="bg-[#1C1E2D] border-b-2 border-black px-4 py-2 flex items-center justify-between gap-3 text-xs select-none">
+        <div className="flex items-center gap-2">
+          <div className="bg-[#FACC15] text-black font-black px-2.5 py-0.5 border-2 border-black shadow-[2px_2px_0px_#000] font-mono text-[11px] flex items-center gap-1.5">
+            <Code2 className="w-3.5 h-3.5" />
+            <span>editor.js</span>
+          </div>
+          <span className="text-[10px] font-mono text-[#F43F5E] font-bold hidden sm:inline">
+            [SAFE ZONE — NEVER COLLAPSES]
+          </span>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Quick Snippet Selectors */}
-          <div className="hidden lg:flex items-center gap-1 font-mono text-[10px] text-slate-400">
-            <span>Presets:</span>
+          <div className="hidden lg:flex items-center gap-1.5 font-mono text-[10px]">
+            <span className="text-slate-400 font-bold">Presets:</span>
             <button
               onClick={() => updateCode(DEFAULT_CODE_SNIPPET)}
-              className="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-amber-300 transition cursor-pointer"
+              className="neo-btn bg-amber-400 text-black px-2 py-0.5 text-[10px]"
+              title="Code with missing bracket"
             >
               {'Missing "}"'}
             </button>
             <button
               onClick={() => updateCode(SAMPLE_VAR_CODE)}
-              className="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-rose-300 transition cursor-pointer"
+              className="neo-btn bg-rose-400 text-black px-2 py-0.5 text-[10px]"
+              title="Code using deprecated var"
             >
               Illegal "var"
             </button>
             <button
               onClick={() => updateCode(SAMPLE_CLEAN_CODE)}
-              className="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-emerald-300 transition cursor-pointer"
+              className="neo-btn bg-emerald-400 text-black px-2 py-0.5 text-[10px]"
+              title="Clean valid code"
             >
               Valid Code
             </button>
@@ -155,21 +165,21 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
           {/* RUN / COMPILE BUTTON */}
           <button
             onClick={handleRunCode}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold text-xs transition-all active:scale-95 shadow-md shadow-emerald-950/50 cursor-pointer"
-            title="Compile and run current code buffer"
+            className="neo-btn bg-[#10B981] hover:bg-[#34D399] text-black font-black px-3.5 py-1.5 text-xs flex items-center gap-1.5 shadow-[3px_3px_0px_#000]"
+            title="Compile code (Ctrl+Enter)"
           >
-            <Play className="w-3.5 h-3.5 fill-current" />
-            <span>Run / Compile</span>
+            <Play className="w-3.5 h-3.5 fill-black" />
+            <span>▶ RUN CODE</span>
           </button>
         </div>
       </div>
 
       {/* Editor Body: Line Numbers + Text Area */}
-      <div className="flex-1 flex overflow-hidden font-mono text-xs sm:text-sm bg-[#070A12] relative min-h-[220px]">
+      <div className="flex-1 flex overflow-hidden font-mono text-xs sm:text-sm bg-[#0E0F1A] relative min-h-[220px]">
         {/* Line Numbers */}
-        <div className="w-10 sm:w-12 bg-[#090D16] text-slate-600 py-3 pr-2 text-right select-none border-r border-slate-800/80 shrink-0 font-mono text-xs">
+        <div className="w-10 sm:w-12 bg-[#161726] text-amber-400 font-bold py-3 pr-2.5 text-right select-none border-r-2 border-black shrink-0 font-mono text-xs">
           {lines.map((_, i) => (
-            <div key={i} className="leading-6">
+            <div key={i} className="leading-6 opacity-80">
               {i + 1}
             </div>
           ))}
@@ -181,35 +191,37 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
           onChange={(e) => updateCode(e.target.value)}
           onKeyDown={handleKeyDown}
           spellCheck="false"
-          className="flex-1 bg-transparent text-slate-200 p-3 leading-6 resize-none focus:outline-none focus:ring-0 font-mono text-xs sm:text-sm overflow-y-auto"
+          className="flex-1 bg-transparent text-amber-100 p-3 leading-6 resize-none focus:outline-none focus:ring-0 font-mono text-xs sm:text-sm overflow-y-auto selection:bg-[#FACC15] selection:text-black"
           placeholder="Write JavaScript code here..."
         />
       </div>
 
       {/* Terminal / Output Console at the Bottom */}
-      <div className="bg-[#090D16] border-t border-slate-800/80 p-3 flex flex-col gap-1.5 text-xs font-mono">
-        <div className="flex items-center justify-between text-slate-400">
+      <div className="bg-[#181926] border-t-2 border-black p-3 flex flex-col gap-2 text-xs font-mono">
+        <div className="flex items-center justify-between text-slate-300">
           <div className="flex items-center gap-2">
-            <Terminal className="w-3.5 h-3.5 text-slate-500" />
-            <span className="font-semibold text-slate-300 text-[11px] tracking-wider uppercase">
-              Terminal Output
+            <div className="bg-black text-[#FACC15] font-black px-1.5 py-0.2 border border-black text-[10px]">
+              TERMINAL
+            </div>
+            <span className="font-bold text-slate-300 text-[11px] uppercase">
+              Execution Output
             </span>
           </div>
 
           {consoleOutput.timestamp && (
-            <span className="text-[10px] text-slate-500">
+            <span className="text-[10px] text-slate-400 font-mono">
               {new Date(consoleOutput.timestamp).toLocaleTimeString()}
             </span>
           )}
         </div>
 
         <div
-          className={`p-2 rounded bg-black/40 border text-xs whitespace-pre-wrap ${
+          className={`p-2.5 border-2 font-mono text-xs whitespace-pre-wrap font-bold ${
             consoleOutput.status === 'error'
-              ? 'border-rose-500/40 text-rose-300'
+              ? 'bg-[#2E1015] border-rose-500 text-rose-300 shadow-[2px_2px_0px_#F43F5E]'
               : consoleOutput.status === 'success'
-              ? 'border-emerald-500/40 text-emerald-300'
-              : 'border-slate-800 text-slate-400'
+              ? 'bg-[#102B1D] border-emerald-400 text-emerald-300 shadow-[2px_2px_0px_#10B981]'
+              : 'bg-[#12131F] border-black text-slate-300 shadow-[2px_2px_0px_#000]'
           }`}
         >
           {consoleOutput.text}

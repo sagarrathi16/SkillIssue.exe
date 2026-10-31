@@ -4,12 +4,11 @@ import { createClickTracker } from '../logic/mistakeDetector';
 import { 
   GitBranch, 
   RotateCcw, 
-  Code2, 
-  Share2, 
-  Terminal, 
-  Sparkles,
   Layers,
-  Wand2
+  Wand2,
+  MapPin,
+  Flame,
+  Radio
 } from 'lucide-react';
 
 export function TopBar({ onJudgeReset }) {
@@ -39,12 +38,12 @@ export function TopBar({ onJudgeReset }) {
 
   return (
     <div
-      className={`w-full bg-[#070A12] border-b px-4 py-2 flex items-center justify-between text-xs select-none transition-all duration-300 ${
+      className={`w-full bg-[#12131F] border-b-2 border-black px-4 py-2 flex items-center justify-between text-xs select-none transition-colors duration-300 ${
         isBetrayal
-          ? 'border-rose-500/50 shadow-[0_0_15px_rgba(239,68,68,0.15)]'
+          ? 'bg-[#2A1117] border-rose-500 shadow-[0_3px_0_#F43F5E]'
           : isAnnoyed
-          ? 'border-amber-500/40'
-          : 'border-slate-800'
+          ? 'bg-[#1C1824]'
+          : 'bg-[#12131F]'
       }`}
     >
       {/* 1. Window Controls & Branding (Collapsible Section) */}
@@ -54,40 +53,40 @@ export function TopBar({ onJudgeReset }) {
           isBetrayal ? 'mood-betrayal-tilted-left' : isAnnoyed ? 'anim-slightly-annoyed' : ''
         }`}
       >
-        {/* Fake Traffic Lights */}
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-rose-500/80 border border-rose-600/50 hover:opacity-80 transition cursor-pointer" />
-          <div className="w-3 h-3 rounded-full bg-amber-500/80 border border-amber-600/50 hover:opacity-80 transition cursor-pointer" />
-          <div className="w-3 h-3 rounded-full bg-emerald-500/80 border border-emerald-600/50 hover:opacity-80 transition cursor-pointer" />
+        {/* Arcade Window Dots */}
+        <div className="flex items-center gap-1.5 bg-black px-2 py-1 border border-black shadow-[1px_1px_0px_#000]">
+          <div className="w-2.5 h-2.5 bg-rose-500 border border-black" />
+          <div className="w-2.5 h-2.5 bg-amber-400 border border-black" />
+          <div className="w-2.5 h-2.5 bg-emerald-400 border border-black" />
         </div>
 
-        {/* Project Breadcrumb */}
-        <div className="hidden sm:flex items-center gap-1.5 text-slate-400 font-mono text-[11px]">
-          <Layers className="w-3.5 h-3.5 text-slate-500" />
-          <span className="text-slate-500">namma-workspace</span>
-          <span>/</span>
-          <span className="text-slate-300 font-medium">bengaluru_routing.js</span>
+        {/* Project Breadcrumb / Stage Info */}
+        <div className="hidden sm:flex items-center gap-1.5 bg-[#1F2133] px-2.5 py-1 border-2 border-black shadow-[2px_2px_0px_#000] font-mono text-[11px]">
+          <Layers className="w-3.5 h-3.5 text-amber-400" />
+          <span className="text-slate-400 font-bold">STAGE 1:</span>
+          <span className="text-amber-300 font-black">silk_board_junction.js</span>
           {trust < 80 && (
-            <span className={`text-[10px] px-1 rounded ${isBetrayal ? 'bg-rose-500/20 text-rose-300' : 'bg-amber-500/20 text-amber-300'}`}>
-              ● modified
+            <span className={`text-[10px] px-1 font-bold ${isBetrayal ? 'bg-rose-500 text-white' : 'bg-amber-400 text-black'}`}>
+              UNSAVED
             </span>
           )}
         </div>
       </div>
 
-      {/* 2. Center Status Pill (Collapsible Section) */}
+      {/* 2. Center Status Pill: Current Area & Weather */}
       <div
         data-physics-id="topbar-breadcrumbs"
-        className={`hidden md:flex items-center gap-2 px-3 py-1 rounded-full border bg-slate-900/60 font-mono text-[11px] transition-transform ${
+        className={`hidden md:flex items-center gap-2 px-3 py-1 border-2 border-black font-mono text-[11px] font-bold transition-transform shadow-[2px_2px_0px_#000] ${
           isBetrayal
-            ? 'border-rose-500/40 text-rose-300 mood-betrayal-tilted-right'
+            ? 'bg-rose-500 text-white mood-betrayal-tilted-right animate-pulse'
             : isAnnoyed
-            ? 'border-amber-500/40 text-amber-300'
-            : 'border-slate-800 text-slate-400'
+            ? 'bg-amber-400 text-black'
+            : 'bg-[#222438] text-slate-200'
         }`}
       >
-        <span className="w-1.5 h-1.5 rounded-full bg-current animate-ping" />
-        <span>OS Mood: {mood}</span>
+        <Radio className="w-3.5 h-3.5 animate-spin" />
+        <span>AREA: KORAMANGALA 🌧️</span>
+        <span className="text-[10px] opacity-75 font-normal">| {mood}</span>
       </div>
 
       {/* 3. Action Tools & Reset Demo Button */}
@@ -95,19 +94,15 @@ export function TopBar({ onJudgeReset }) {
         {/* Collapsible Action Tools */}
         <div
           data-physics-id="topbar-action-tools"
-          className={`flex items-center gap-1.5 transition-transform ${
+          className={`flex items-center gap-2 transition-transform ${
             isBetrayal ? 'mood-betrayal-tilted-left' : ''
           }`}
         >
           {/* Format Code Button */}
           <button
             onClick={() => handleToolbarClick('Format_Document')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded border transition-all active:scale-95 cursor-pointer font-mono text-[11px] ${
-              isBetrayal
-                ? 'bg-rose-950/40 border-rose-500/40 text-rose-300 hover:bg-rose-900/60'
-                : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white'
-            }`}
-            title="Format Code (rapid clicks will offend the OS!)"
+            className="neo-btn bg-[#C084FC] text-black px-2.5 py-1 font-mono text-[11px] flex items-center gap-1"
+            title="Format Code (rapid clicks will trigger spam penalty!)"
           >
             <Wand2 className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Format</span>
@@ -116,14 +111,10 @@ export function TopBar({ onJudgeReset }) {
           {/* Git Branch Tool */}
           <button
             onClick={() => handleToolbarClick('Git_Branch_Sync')}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded border transition-all active:scale-95 cursor-pointer font-mono text-[11px] ${
-              isBetrayal
-                ? 'bg-rose-950/40 border-rose-500/40 text-rose-300 hover:bg-rose-900/60'
-                : 'bg-slate-900/90 border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white'
-            }`}
-            title="Git Sync (rapid clicks will offend the OS!)"
+            className="neo-btn bg-[#38BDF8] text-black px-2.5 py-1 font-mono text-[11px] flex items-center gap-1"
+            title="Git Sync (rapid clicks will trigger spam penalty!)"
           >
-            <GitBranch className="w-3.5 h-3.5 text-emerald-400" />
+            <GitBranch className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">main</span>
           </button>
         </div>
@@ -131,14 +122,13 @@ export function TopBar({ onJudgeReset }) {
         {/* 4. SACRED SAFE ZONE: Reset Demo Button (NEVER COLLAPSES - NO data-physics-id) */}
         <button
           onClick={handleReset}
-          className="flex items-center gap-1.5 px-3 py-1 rounded bg-emerald-600/30 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/50 font-bold transition-all active:scale-95 cursor-pointer font-mono text-[11px] shadow-sm ml-1"
+          className="neo-btn bg-[#4ADE80] text-black px-3 py-1 font-black font-mono text-[11px] flex items-center gap-1.5 shadow-[3px_3px_0px_#000]"
           title="Instant <100ms Demo Reset for Next Judge (Shift + Escape)"
         >
           <RotateCcw className="w-3.5 h-3.5" />
-          <span>Reset for Judge</span>
+          <span>Reset OS</span>
         </button>
       </div>
     </div>
   );
 }
-
