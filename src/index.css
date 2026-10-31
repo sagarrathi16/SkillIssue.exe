@@ -68,6 +68,15 @@
   50% { opacity: 0.85; transform: scaleY(0.97); }
 }
 
+@keyframes autoDismissBar {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+.anim-dismiss-bar {
+  animation: autoDismissBar 6s linear forwards;
+}
+
 .anim-slightly-annoyed {
   animation: slightTremor 2s ease-in-out infinite;
 }

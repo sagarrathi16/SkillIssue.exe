@@ -2,14 +2,16 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useOS } from '../app/osStateMachine';
 import { selectDialogue } from '../logic/dialogueSelector';
 import { audioManager } from '../audio/AudioManager';
-import { Volume2, VolumeX, Sparkles, MessageSquare } from 'lucide-react';
+import { Volume2, VolumeX, X, AlertTriangle } from 'lucide-react';
 
 export function RoastAssistant() {
   const { state } = useOS();
   const [displayedText, setDisplayedText] = useState('');
   const [isMuted, setIsMuted] = useState(audioManager.isMuted);
+  const [isVisible, setIsVisible] = useState(false);
   const previousTextRef = useRef('');
   const userInteractedRef = useRef(false);
+  const hideTimerRef = useRef(null);
 
   // Unlock audio after first user gesture (comply with browser Autoplay Policies)
   useEffect(() => {
@@ -32,12 +34,19 @@ export function RoastAssistant() {
     };
   }, []);
 
+  // Cleanup hide timer on unmount
+  useEffect(() => {
+    return () => {
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    };
+  }, []);
+
   // Evaluate the current context-aware roast dialogue
   const dialogue = useMemo(() => {
     return selectDialogue(state);
   }, [state.mood, state.trust, state.eventHistory, state.mistakeCount, state.ignoredWarnings]);
 
-  // Typewriter effect & sound dispatch when dialogue changes
+  // Trigger popup & sound dispatch when dialogue changes to an active mistake/event
   useEffect(() => {
     if (!dialogue || !dialogue.text) return;
 
@@ -45,13 +54,28 @@ export function RoastAssistant() {
       const isInitialMount = previousTextRef.current === '';
       previousTextRef.current = dialogue.text;
 
-      // 1. Play procedural sound effect & voice line only after initial mount or user interaction
-      if (!isInitialMount || userInteractedRef.current) {
+      // Do not popup on initial calm/idle states
+      const isCalmIdle = dialogue.id === 'calm_welcome' || dialogue.id === 'calm_guarded';
+
+      if (!isCalmIdle && !isInitialMount) {
+        setIsVisible(true);
+
+        // Reset previous auto-dismiss timer
+        if (hideTimerRef.current) {
+          clearTimeout(hideTimerRef.current);
+        }
+
+        // Auto-dismiss after 6 seconds
+        hideTimerRef.current = setTimeout(() => {
+          setIsVisible(false);
+        }, 6000);
+
+        // 1. Play procedural sound effect & voice line
         try {
           audioManager.playSfx(dialogue.soundType);
           audioManager.speak(dialogue.text);
         } catch (e) {
-          // Audio autoplay block handled cleanly
+          // Handled cleanly
         }
       }
 
@@ -71,6 +95,13 @@ export function RoastAssistant() {
       return () => clearInterval(interval);
     }
   }, [dialogue]);
+
+  const handleDismiss = () => {
+    setIsVisible(false);
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+    }
+  };
 
   const handleToggleMute = () => {
     const muted = audioManager.toggleMute();
@@ -97,7 +128,7 @@ export function RoastAssistant() {
 
   return (
     <>
-      {/* 1. Top-Right Audio Control Overlay (Neo Button) */}
+      {/* 1. Top-Right Audio Control Button (Always accessible) */}
       <div className="fixed top-2.5 right-3 z-50 flex items-center gap-2">
         <button
           onClick={handleToggleMute}
@@ -122,53 +153,64 @@ export function RoastAssistant() {
         </button>
       </div>
 
-      {/* 2. Persistent RPG / Mario Dialogue Box with Typewriter Effect */}
-      <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 max-w-2xl w-[94vw] pointer-events-none select-none">
-        <div className="bg-[#181926] border-2 border-black shadow-[5px_5px_0px_#000] p-3 sm:p-4 flex items-start gap-3.5 pointer-events-auto transition-all duration-300">
-          {/* Animated Avatar Mascot (Arcade Portrait) */}
-          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#FACC15] border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-center text-3xl shrink-0">
-            {getAvatarEmoji(dialogue.avatarMood)}
-          </div>
+      {/* 2. Floating Event Meme Popup (Only appears on mistake, auto-dismisses in 6s) */}
+      {isVisible && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-xl w-[94vw] select-none transition-all duration-300">
+          <div className="bg-[#181926] border-3 border-black shadow-[6px_6px_0px_#000] p-4 flex flex-col sm:flex-row items-center gap-4 relative overflow-hidden">
+            {/* Auto-Dismiss Progress Bar at Top */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-black">
+              <div className="h-full bg-[#FACC15] anim-dismiss-bar" />
+            </div>
 
-          {/* Subtitle Content */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
-              <div className="flex items-center gap-1.5">
-                <span className="bg-black text-[#FACC15] font-black text-[11px] px-2 py-0.5 border border-black uppercase font-mono tracking-wider">
-                  AUTO ANNA
-                </span>
-                <span className="bg-[#C084FC] text-black font-black text-[10px] px-2 py-0.5 border border-black font-mono">
-                  {dialogue.tag}
-                </span>
+            {/* Close Button */}
+            <button
+              onClick={handleDismiss}
+              className="absolute top-2 right-2 w-6 h-6 bg-black text-white hover:bg-rose-500 flex items-center justify-center border border-black cursor-pointer z-10 transition-colors"
+              title="Close notification"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Big Prominent Meme Image */}
+            {dialogue.meme && (
+              <div className="w-full sm:w-48 sm:h-36 max-h-44 bg-black border-2 border-black shadow-[3px_3px_0px_#000] shrink-0 overflow-hidden flex flex-col">
+                <img
+                  src={dialogue.meme}
+                  alt="Reaction Meme"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+
+            {/* Roast Dialogue Content */}
+            <div className="flex-1 min-w-0 flex flex-col justify-between self-stretch pr-6">
+              <div>
+                <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                  <span className="text-xl">{getAvatarEmoji(dialogue.avatarMood)}</span>
+                  <span className="bg-black text-[#FACC15] font-black text-[11px] px-2 py-0.5 border border-black uppercase font-mono tracking-wider">
+                    OS TECH LEAD
+                  </span>
+                  <span className="bg-[#C084FC] text-black font-black text-[10px] px-2 py-0.5 border border-black font-mono">
+                    {dialogue.tag}
+                  </span>
+                </div>
+
+                <p className="text-xs sm:text-sm font-mono text-white font-bold leading-relaxed tracking-normal mt-1">
+                  "{displayedText || dialogue.text}"
+                </p>
               </div>
 
-              {dialogue.kannadaGlossary && (
-                <span className="bg-[#38BDF8] text-black font-black text-[10px] px-2 py-0.5 border border-black font-mono">
-                  {dialogue.kannadaGlossary}
-                </span>
+              {dialogue.memeCaption && (
+                <div className="mt-2.5">
+                  <span className="bg-[#FACC15] text-black font-black text-[9px] px-2 py-0.5 border border-black font-mono uppercase inline-block shadow-[1px_1px_0px_#000]">
+                    MEME: {dialogue.memeCaption}
+                  </span>
+                </div>
               )}
             </div>
-
-            <p className="text-xs sm:text-sm font-mono text-white font-bold leading-relaxed tracking-normal min-h-[1.5rem]">
-              "{displayedText || dialogue.text}"
-            </p>
           </div>
-
-          {/* Reaction Meme Stamp */}
-          {dialogue.meme && (
-            <div className="hidden sm:flex flex-col items-center shrink-0 w-24 bg-black border-2 border-black shadow-[3px_3px_0px_#000] overflow-hidden">
-              <img
-                src={dialogue.meme}
-                alt="Reaction Meme"
-                className="w-full h-16 object-cover"
-              />
-              <span className="w-full bg-[#FACC15] text-black font-black text-[7px] text-center py-0.5 px-0.5 truncate font-mono uppercase">
-                {dialogue.memeCaption || 'REACTION'}
-              </span>
-            </div>
-          )}
         </div>
-      </div>
+      )}
     </>
   );
 }
