@@ -245,3 +245,4 @@ export function negotiationReducer(state, action) {
       return state;
   }
 }
+
