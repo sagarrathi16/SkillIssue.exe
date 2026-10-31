@@ -26,6 +26,21 @@ function calculateCoffeeFuel(cupsDrank, hoursAwake) {
 }
 
 console.log(calculateCoffeeFuel(5, 14));`,
+    solvedCode: `// =========================================================================
+// ☕ CHALLENGE 1/4: THE COFFEE MACHINE COMPILER (CORRECT ANSWER)
+// TASK: Fix the syntax error in calculateCoffeeFuel()!
+// =========================================================================
+function calculateCoffeeFuel(cupsDrank, hoursAwake) {
+  const caffeinePerCup = 95; // mg
+  const burnoutThreshold = 400; // mg
+
+  if (cupsDrank * caffeinePerCup > burnoutThreshold) {
+    const jitterFactor = hoursAwake * 1.5;
+    return "Caffeine overload! Jitter level: " + jitterFactor;
+  }
+}
+
+console.log(calculateCoffeeFuel(5, 14));`,
     congratulation: '☕ BOOM! Coffee engine compiled without a hitch! The caffeine is flowing! Trust +15 HP.',
     successOutput: '✨ COMPILED SUCCESSFULLY!\nOutput: Caffeine overload! Jitter level: 21',
   },
@@ -47,6 +62,21 @@ var sleepHours = 2;
 function checkSurvival() {
   var minimumEnergy = 12;
   var currentEnergy = (energyDrinks * 3) + sleepHours;
+  return currentEnergy >= minimumEnergy;
+}
+
+console.log(hackerName, "survival check:", checkSurvival());`,
+    solvedCode: `// =========================================================================
+// 🚫 CHALLENGE 2/4: THE "var" PURGE (CORRECT ANSWER)
+// TASK: In 2026, the OS refuses to compile code using deprecated 'var'!
+// =========================================================================
+const hackerName = "CaffeineNinja";
+const energyDrinks = 4;
+const sleepHours = 2;
+
+function checkSurvival() {
+  const minimumEnergy = 12;
+  const currentEnergy = (energyDrinks * 3) + sleepHours;
   return currentEnergy >= minimumEnergy;
 }
 
@@ -75,6 +105,21 @@ function splitPrizePool(totalPrize, teamSize) {
 }
 
 console.log("Payout per hacker: $" + splitPrizePool(6000, 4));`,
+    solvedCode: `// =========================================================================
+// 💰 CHALLENGE 3/4: PRIZE POOL SPLITTER (CORRECT ANSWER)
+// TASK: Your hackathon team won 1st place!
+// =========================================================================
+function splitPrizePool(totalPrize, teamSize) {
+  const platformFee = 0.05;
+  const netPool = totalPrize * (1 - platformFee);
+
+  if (teamSize > 0) {
+    const sharePerHacker = (netPool / teamSize);
+    return Math.floor(sharePerHacker);
+  }
+}
+
+console.log("Payout per hacker: $" + splitPrizePool(6000, 4));`,
     congratulation: '💰 Prize money disbursed cleanly! Team morale maximized! Trust +15 HP.',
     successOutput: '✨ COMPILED SUCCESSFULLY!\nOutput: Payout per hacker: $1425',
   },
@@ -99,10 +144,95 @@ function deployService(projectName, commitHash) {
 }
 
 console.log(deployService("SkillIssueCore", "c0deday"));`,
+    solvedCode: `// =========================================================================
+// 🚀 CHALLENGE 4/4: THE MIDNIGHT PRODUCTION SHIP (CORRECT ANSWER)
+// TASK: Final CodeDay deployment!
+// =========================================================================
+function deployService(projectName, commitHash) {
+  const deployTimestamp = 1793429900;
+  const isHealthy = true;
+
+  if (projectName && isHealthy) {
+    return "DEPLOY SUCCESS: " + projectName + " [" + commitHash + "]";
+  }
+  return "DEPLOY FAILED";
+}
+
+console.log(deployService("SkillIssueCore", "c0deday"));`,
     congratulation: '🏆 100% SYNTAX MASTERY! You have conquered every CodeDay challenge! The OS is at total peace.',
     successOutput: '✨ COMPILED SUCCESSFULLY!\nOutput: DEPLOY SUCCESS: SkillIssueCore [c0deday]',
   },
 ];
+
+export const BUG_PRESETS = {
+  BRACKET_BUG: `// =========================================================================
+// 💥 BUG TEST: UNBALANCED BRACKET SYNTAX FRACTURE
+// =========================================================================
+function calculateCaffeineLoad(shots) {
+  const limit = 4;
+  if (shots > limit) {
+    const warning = "Severe tachycardia incoming";
+    return warning;
+  // Missing closing bracket for if statement!
+}
+
+console.log(calculateCaffeineLoad(6));`,
+
+  VAR_BUG: `// =========================================================================
+// 🚫 BUG TEST: DEPRECATED "var" USAGE IN 2026
+// =========================================================================
+var developerName = "SleepDeprivedHacker";
+var hackathonHour = 23;
+var bugsRemaining = 17;
+
+function estimateSurvival() {
+  var panicMode = true;
+  return developerName + " has " + bugsRemaining + " bugs to fix at hour " + hackathonHour;
+}
+
+console.log(estimateSurvival());`,
+
+  SEMICOLON_BUG: `// =========================================================================
+// ⚠️ BUG TEST: MISSING MANDATORY SEMICOLON
+// =========================================================================
+function processDeploy() {
+  const commitId = "c0deday"
+  const branchName = "main"
+  let isReady = false
+
+  return "Deploying " + branchName + " at commit " + commitId;
+}
+
+console.log(processDeploy());`,
+
+  COMBO_BUG: `// =========================================================================
+// 💀 BUG TEST: MULTIPLE SYNTAX FRACTURES COMBINED
+// Contains: illegal 'var' + missing semicolons + unclosed bracket!
+// =========================================================================
+var hackathonTarget = "GrandPrize"
+var redBullsDrank = 7
+
+function executeFinalPush(target) {
+  var energyLevel = 9000
+  if (redBullsDrank > 5) {
+    const status = "Hyper-caffeinated coder running wild"
+    return status + " toward " + target;
+  // Missing bracket here!
+}
+
+console.log(executeFinalPush(hackathonTarget));`,
+
+  MISMATCH_BUG: `// =========================================================================
+// ❌ BUG TEST: MISMATCHED BRACKET ')' INSTEAD OF '}'
+// =========================================================================
+function checkMemoryOverflow(bufferSize) {
+  if (bufferSize > 1024) {
+    return "Memory overflow risk detected!";
+  ) // ⚠️ SYNTAX FRACTURE: Expected '}' but found ')'
+}
+
+console.log(checkMemoryOverflow(2048));`,
+};
 
 export const DEFAULT_CODE_SNIPPET = CODING_CHALLENGES[0].starterCode;
 

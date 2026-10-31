@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useOS, OSMood } from '../app/osStateMachine';
-import { validateCode, CODING_CHALLENGES, DEFAULT_CODE_SNIPPET } from '../logic/mistakeDetector';
+import { validateCode, CODING_CHALLENGES, BUG_PRESETS, DEFAULT_CODE_SNIPPET } from '../logic/mistakeDetector';
 import { audioManager } from '../audio/AudioManager';
 import { 
   Play, 
@@ -120,6 +120,35 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
     setConsoleOutput({
       status: 'idle',
       text: `Reset code for Challenge ${challengeIndex + 1}: "${CODING_CHALLENGES[challengeIndex].title}"`,
+      timestamp: Date.now(),
+    });
+  };
+
+  const handleLoadCorrectAnswer = () => {
+    const active = CODING_CHALLENGES[challengeIndex];
+    if (active && active.solvedCode) {
+      updateCode(active.solvedCode);
+      setErrorLine(null);
+      setLastError(null);
+      setCongratsBanner(null);
+      audioManager.playSfx('chime');
+      setConsoleOutput({
+        status: 'idle',
+        text: `✨ Loaded verified solution for Question ${challengeIndex + 1}: "${active.title}"!\nClick "▶ RUN CODE" to verify and pass.`,
+        timestamp: Date.now(),
+      });
+    }
+  };
+
+  const handleLoadBug = (bugSnippet, bugTitle) => {
+    updateCode(bugSnippet);
+    setErrorLine(null);
+    setLastError(null);
+    setCongratsBanner(null);
+    audioManager.playSfx('beep');
+    setConsoleOutput({
+      status: 'idle',
+      text: `🐛 Loaded Bug Preset: [${bugTitle}].\nClick "▶ RUN CODE" to trigger compiler breakdown!`,
       timestamp: Date.now(),
     });
   };
@@ -254,22 +283,68 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
       className={`flex-1 flex flex-col bg-[#13141F] border-2 overflow-hidden transition-all duration-300 relative ${tiltClass} ${joltClass}`}
     >
       {/* Editor Top Bar & Controls */}
-      <div className="bg-[#1C1E2D] border-b-2 border-black px-4 py-2 flex items-center justify-between gap-3 text-xs select-none">
+      <div className="bg-[#1C1E2D] border-b-2 border-black px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs select-none">
         <div className="flex items-center gap-2">
           <div className="bg-[#FACC15] text-black font-black px-2.5 py-0.5 border-2 border-black shadow-[2px_2px_0px_#000] font-mono text-[11px] flex items-center gap-1.5">
             <Code2 className="w-3.5 h-3.5" />
             <span>challenge_{challengeIndex + 1}.js</span>
           </div>
-          <span className="text-[10px] font-mono text-[#F43F5E] font-bold hidden sm:inline">
+          <span className="text-[10px] font-mono text-[#F43F5E] font-bold hidden xl:inline">
             [SAFE ZONE — NEVER COLLAPSES]
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* RUN / COMPILE BUTTON */}
+        <div className="flex flex-wrap items-center gap-1.5 font-mono">
+          {/* 1. Correct Answer Button */}
+          <button
+            onClick={handleLoadCorrectAnswer}
+            className="neo-btn bg-[#34D399] hover:bg-[#6EE7B7] text-black font-black px-2.5 py-1 text-[11px] flex items-center gap-1 shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5"
+            title={`Load verified solution for Question ${challengeIndex + 1}`}
+          >
+            <Sparkles className="w-3.5 h-3.5 fill-black" />
+            <span>✨ Correct Answer</span>
+          </button>
+
+          <span className="text-slate-500 font-bold text-[10px] hidden sm:inline px-0.5">|</span>
+          <span className="text-slate-400 font-bold text-[10px] hidden lg:inline">Bugs:</span>
+
+          {/* 2. Bug Presets */}
+          <button
+            onClick={() => handleLoadBug(BUG_PRESETS.BRACKET_BUG, 'Missing "}"')}
+            className="neo-btn bg-[#FACC15] hover:bg-yellow-300 text-black font-black px-2 py-1 text-[10px] shadow-[2px_2px_0px_#000]"
+            title="Load code with unclosed bracket syntax error"
+          >
+            {'💥 Missing "}"'}
+          </button>
+
+          <button
+            onClick={() => handleLoadBug(BUG_PRESETS.VAR_BUG, 'Illegal "var"')}
+            className="neo-btn bg-[#FB7185] hover:bg-rose-400 text-black font-black px-2 py-1 text-[10px] shadow-[2px_2px_0px_#000]"
+            title="Load code with deprecated var declarations"
+          >
+            🚫 Illegal "var"
+          </button>
+
+          <button
+            onClick={() => handleLoadBug(BUG_PRESETS.SEMICOLON_BUG, 'Missing ";"')}
+            className="neo-btn bg-[#C084FC] hover:bg-purple-300 text-black font-black px-2 py-1 text-[10px] shadow-[2px_2px_0px_#000] hidden sm:inline-block"
+            title="Load code with missing semicolons"
+          >
+            ⚠️ Missing ";"
+          </button>
+
+          <button
+            onClick={() => handleLoadBug(BUG_PRESETS.COMBO_BUG, 'Combo Bugs')}
+            className="neo-btn bg-[#FF4365] hover:bg-red-400 text-white font-black px-2 py-1 text-[10px] shadow-[2px_2px_0px_#000]"
+            title="Load code with multiple combined syntax fractures"
+          >
+            💀 Combo Bugs
+          </button>
+
+          {/* 3. RUN / COMPILE BUTTON */}
           <button
             onClick={handleRunCode}
-            className="neo-btn bg-[#10B981] hover:bg-[#34D399] text-black font-black px-3.5 py-1.5 text-xs flex items-center gap-1.5 shadow-[3px_3px_0px_#000]"
+            className="neo-btn bg-[#10B981] hover:bg-[#34D399] text-black font-black px-3.5 py-1 text-xs flex items-center gap-1.5 shadow-[3px_3px_0px_#000] ml-1"
             title="Compile code (Ctrl+Enter)"
           >
             <Play className="w-3.5 h-3.5 fill-black" />
