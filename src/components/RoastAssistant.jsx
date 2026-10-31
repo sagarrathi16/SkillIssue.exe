@@ -9,6 +9,28 @@ export function RoastAssistant() {
   const [displayedText, setDisplayedText] = useState('');
   const [isMuted, setIsMuted] = useState(audioManager.isMuted);
   const previousTextRef = useRef('');
+  const userInteractedRef = useRef(false);
+
+  // Unlock audio after first user gesture (comply with browser Autoplay Policies)
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      userInteractedRef.current = true;
+      audioManager.initContext();
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
+
+    window.addEventListener('click', handleFirstInteraction);
+    window.addEventListener('keydown', handleFirstInteraction);
+    window.addEventListener('touchstart', handleFirstInteraction);
+
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+    };
+  }, []);
 
   // Evaluate the current context-aware roast dialogue
   const dialogue = useMemo(() => {
@@ -20,11 +42,18 @@ export function RoastAssistant() {
     if (!dialogue || !dialogue.text) return;
 
     if (dialogue.text !== previousTextRef.current) {
+      const isInitialMount = previousTextRef.current === '';
       previousTextRef.current = dialogue.text;
 
-      // 1. Play procedural sound effect & voice line
-      audioManager.playSfx(dialogue.soundType);
-      audioManager.speak(dialogue.text);
+      // 1. Play procedural sound effect & voice line only after initial mount or user interaction
+      if (!isInitialMount || userInteractedRef.current) {
+        try {
+          audioManager.playSfx(dialogue.soundType);
+          audioManager.speak(dialogue.text);
+        } catch (e) {
+          // Audio autoplay block handled cleanly
+        }
+      }
 
       // 2. Typewriter animation
       let charIdx = 0;

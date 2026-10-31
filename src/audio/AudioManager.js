@@ -13,11 +13,15 @@ class AudioManager {
     this.isUnlocked = false;
     this.activeUtterance = null;
 
-    // Try to restore saved preferences
+    // Try to restore saved preferences safely (handles Brave privacy shields)
     if (typeof window !== 'undefined') {
-      const savedMute = localStorage.getItem('namma_os_muted');
-      if (savedMute !== null) {
-        this.isMuted = savedMute === 'true';
+      try {
+        const savedMute = localStorage.getItem('namma_os_muted');
+        if (savedMute !== null) {
+          this.isMuted = savedMute === 'true';
+        }
+      } catch (err) {
+        // LocalStorage access restricted by browser
       }
     }
   }
@@ -27,18 +31,24 @@ class AudioManager {
    */
   initContext() {
     if (!this.audioCtx && typeof window !== 'undefined') {
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if (AudioContextClass) {
-        this.audioCtx = new AudioContextClass();
-        this.masterGain = this.audioCtx.createGain();
-        this.masterGain.gain.value = this.isMuted ? 0 : this.volume;
-        this.masterGain.connect(this.audioCtx.destination);
-        this.isUnlocked = true;
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          this.audioCtx = new AudioContextClass();
+          this.masterGain = this.audioCtx.createGain();
+          this.masterGain.gain.value = this.isMuted ? 0 : this.volume;
+          this.masterGain.connect(this.audioCtx.destination);
+          this.isUnlocked = true;
+        }
+      } catch (err) {
+        return null;
       }
     }
 
     if (this.audioCtx && this.audioCtx.state === 'suspended') {
-      this.audioCtx.resume();
+      try {
+        this.audioCtx.resume();
+      } catch (err) {}
     }
 
     return this.audioCtx;
@@ -47,20 +57,26 @@ class AudioManager {
   setVolume(newVol) {
     this.volume = Math.max(0, Math.min(1, newVol));
     if (this.masterGain && !this.isMuted) {
-      this.masterGain.gain.setValueAtTime(this.volume, this.audioCtx?.currentTime || 0);
+      try {
+        this.masterGain.gain.setValueAtTime(this.volume, this.audioCtx?.currentTime || 0);
+      } catch (err) {}
     }
   }
 
   toggleMute() {
     this.isMuted = !this.isMuted;
     if (typeof window !== 'undefined') {
-      localStorage.setItem('namma_os_muted', String(this.isMuted));
+      try {
+        localStorage.setItem('namma_os_muted', String(this.isMuted));
+      } catch (err) {}
     }
     if (this.masterGain && this.audioCtx) {
-      this.masterGain.gain.setValueAtTime(
-        this.isMuted ? 0 : this.volume,
-        this.audioCtx.currentTime
-      );
+      try {
+        this.masterGain.gain.setValueAtTime(
+          this.isMuted ? 0 : this.volume,
+          this.audioCtx.currentTime
+        );
+      } catch (err) {}
     }
     // Cancel active speech synthesis if muted
     if (this.isMuted && typeof window !== 'undefined' && window.speechSynthesis) {

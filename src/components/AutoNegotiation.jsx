@@ -73,7 +73,7 @@ export function AutoNegotiation({ onNegotiationSuccess }) {
             </div>
             <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
               <span className="flex items-center gap-1 text-sky-400 font-medium">
-                <CloudRain className="w-3.5 h-3.5" /> Silk Board $\rightarrow$ Indiranagar
+                <CloudRain className="w-3.5 h-3.5" /> Silk Board → Indiranagar
               </span>
             </div>
           </div>
