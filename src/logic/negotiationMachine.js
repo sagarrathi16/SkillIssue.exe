@@ -1,7 +1,7 @@
 /**
- * Bengaluru Auto-Rickshaw Boss Negotiation State Machine
- * Route: Silk Board to Indiranagar at 6:30 PM in pouring rain.
- * Deterministic, branching, culturally authentic.
+ * Late-Night Surge Pricing Driver Boss Negotiation State Machine
+ * Route: High-Traffic Tech Hub to Downtown at 6:30 PM in pouring rain.
+ * Deterministic, branching, universally relatable developer humor.
  */
 
 export const INITIAL_NEGOTIATION_STATE = {
@@ -12,177 +12,167 @@ export const INITIAL_NEGOTIATION_STATE = {
   history: [
     {
       speaker: 'driver',
-      text: "Silk Board inda Indiranagar ah? At 6:30 PM in this pouring rain?! ₹450 fixed, no meter. Take it or get drenched, boss!",
-      kannadaGlossary: "Silk Board inda = From Silk Board",
+      text: "Late-night monsoon surge pricing! Heavy rain outside, zero cabs available. ₹450 fixed cash, no meter. Take it or get drenched!",
     },
   ],
 };
 
 export const NEGOTIATION_STAGES = {
   1: {
-    prompt: "Driver is refusing meter and demands ₹450 flat rate in the rain.",
+    prompt: "Driver refuses regular meter and demands ₹450 surge pricing in the rain.",
     choices: [
       {
         id: 'STAGE1_METER_LEGAL',
-        label: '"Anna, meter haaki please, law prakara meter haakbeku."',
-        subtitle: 'Citing the law to a Bengaluru auto driver...',
+        label: '"Boss, please turn on the meter. That is the official regulation."',
+        subtitle: 'Citing transport regulations to a surge-pricing driver...',
         effect: {
           moodDelta: -15,
           fare: 500,
           nextStage: 2,
-          driverReply: "Law-va? Silk Board traffic nodidya? Now it's ₹500 fixed. Take it or hire a helicopter!",
-          kannadaGlossary: "Nodidya = Did you see?",
+          driverReply: "Regulations? Have you seen the flood outside? Now it's ₹500 fixed. Take it or hire a helicopter!",
         },
       },
       {
         id: 'STAGE1_UBER_THREAT',
-        label: '"Wait, let me check Uber / Ola auto price first."',
-        subtitle: 'Threatening with aggregator apps.',
+        label: '"Wait, let me compare prices on Uber and ride apps first."',
+        subtitle: 'Threatening with ride-hailing aggregators.',
         effect: {
           moodDelta: -40,
           setMood: 0,
           status: 'LOST',
-          driverReply: "Hoguappa, book Uber! See if anyone accepts in this rain! 45 minutes they will search, then cancel! Don't waste my time!",
-          kannadaGlossary: "Hoguappa = Go away, man!",
+          driverReply: "Go ahead, open your apps! See if any driver accepts in this rain! They will search for 45 minutes and cancel. Don't waste my time!",
         },
       },
       {
         id: 'STAGE1_METER_PLUS_50',
-        label: '"Anna, 6:30 PM gottu. Meter mele ₹50 extra kodthini, direct route."',
-        subtitle: 'The respectful local middle ground.',
+        label: '"Boss, I know it is peak rush hour. I will pay meter plus ₹50 extra tip."',
+        subtitle: 'The respectful middle-ground negotiation.',
         effect: {
           moodDelta: +25,
           fare: 350,
           nextStage: 2,
-          driverReply: "Hmm... meter mele 50 ah? But Silk Board junction is fully blocked. Make it ₹320 flat, then we'll see.",
-          kannadaGlossary: "Gottu = I know / Meter mele = On top of meter",
+          driverReply: "Meter plus ₹50? But the main avenue is completely flooded. Make it ₹320 flat, then we have a deal.",
         },
       },
     ],
   },
 
   2: {
-    prompt: "Driver complains about Sony World waterlogging and engine risk.",
+    prompt: "Driver complains about engine waterlogging risk on the flooded highway.",
     choices: [
       {
         id: 'STAGE2_ONE_AND_HALF',
-        label: '"One-and-half kodthini anna (₹260). Through inner Koramangala roads."',
-        subtitle: 'Proposing standard 1.5x night rate + shortcut route.',
+        label: '"I will pay 1.5x night rate (₹260) if we take the back alley shortcut."',
+        subtitle: 'Proposing standard 1.5x night rate + smart detour.',
         effect: {
           moodDelta: +20,
           fare: 280,
           nextStage: 3,
-          driverReply: "Koramangala 4th block lane-gala? Clever macha. But that route has big potholes. Make it ₹280 cash?",
-          kannadaGlossary: "Lane-gala = The back lanes",
+          driverReply: "The back alley bypass? Clever idea. But that road has huge potholes. Make it ₹280 cash?",
         },
       },
       {
         id: 'STAGE2_MAPS_ARGUMENT',
-        label: '"Why extra? Google Maps says only 25 minutes!"',
-        subtitle: 'Arguing with GPS estimates.',
+        label: '"Why extra? Google Maps says it is only a 20-minute drive!"',
+        subtitle: 'Arguing with GPS navigation estimates.',
         effect: {
           moodDelta: -20,
           fare: 400,
           nextStage: 4,
-          driverReply: "Google Maps runs on satellite, my auto runs on petrol and tears! ₹400 final!",
+          driverReply: "Google Maps runs on satellites, my engine runs on expensive petrol and tears! ₹400 final!",
         },
       },
       {
         id: 'STAGE2_BIKE_TAXI_THREAT',
-        label: '"If you don\'t come, I will take Rapido bike taxi in the rain."',
-        subtitle: 'Threatening to take a 2-wheeler.',
+        label: '"If you refuse, I will order a two-wheeler bike taxi in the rain."',
+        subtitle: 'Threatening to take a motorcycle in monsoon weather.',
         effect: {
           moodDelta: -40,
           setMood: 0,
           status: 'LOST',
-          driverReply: "In this heavy rain bike taxi-na? Hospital bill ₹50,000 agutthe! Hogu!",
-          kannadaGlossary: "Agutthe = It will become",
+          driverReply: "A motorcycle in this hurricane?! The hospital emergency bill will be ₹50,000! Forget it!",
         },
       },
     ],
   },
 
   3: {
-    prompt: "Climax: Thunder rumbling. Driver is debating heading home for RCB highlights.",
+    prompt: "Climax: Thunder rumbling. Driver is deciding whether to call it a night.",
     choices: [
       {
         id: 'STAGE3_EXACT_CASH_TECH',
-        label: '"Anna, ₹240 exact cash, no UPI drama. CodeDay project restore maadbeku!"',
-        subtitle: 'Cash payment + CodeDay appeal.',
+        label: '"Boss, ₹240 exact cash in hand right now. Help me get home to finish my project!"',
+        subtitle: 'Immediate cash payment + relatable developer appeal.',
         effect: {
           moodDelta: +25,
           setMood: 90,
           fare: 240,
           status: 'WON',
-          driverReply: "Exact cash? No 'server down' PhonePe drama? And you are building software apps? Sari baa macha, hop in! Indiranagar non-stop!",
-          kannadaGlossary: "Sari baa = Okay, come!",
+          driverReply: "Exact cash? No 'server down' mobile payment drama? And you need to finish your coding project? Hop in, let's get you home dry!",
         },
       },
       {
         id: 'STAGE3_DOMLUR_ROUTE',
-        label: '"Anna, meter mele ₹40 extra + bypass route through Domlur."',
-        subtitle: 'Tactical bypass suggestion.',
+        label: '"Boss, meter plus ₹40 extra tip and take the elevated flyover route."',
+        subtitle: 'Fast elevated corridor bypass.',
         effect: {
           moodDelta: +20,
           setMood: 85,
           fare: 230,
           status: 'WON',
-          driverReply: "Domlur flyover route? Super idea guru! ₹230 is fair deal. Baa baa, before signal turns red!",
-          kannadaGlossary: "Guru = Bro / Leader",
+          driverReply: "Elevated flyover route? Great idea! ₹230 is a fair deal. Get in before the traffic signal turns red!",
         },
       },
       {
         id: 'STAGE3_LOWBALL',
-        label: '"₹140 take it or leave it, anna."',
+        label: '"₹140 take it or leave it."',
         subtitle: 'Absurd lowball in prime monsoon surge.',
         effect: {
           moodDelta: -40,
           setMood: 0,
           status: 'LOST',
-          driverReply: "₹140-ge auto tyre kooda baralla! Walk to Indiranagar in the flood!",
-          kannadaGlossary: "Baralla = Won't come",
+          driverReply: "₹140?! You cannot even buy a replacement tire for ₹140! Walk home in the flood!",
         },
       },
     ],
   },
 
   4: {
-    prompt: "Driver sees you shivering in the rain after the Google Maps argument.",
+    prompt: "Driver sees you shivering under the street lamp after the GPS argument.",
     choices: [
       {
         id: 'STAGE4_KANNADIGA_TECH',
-        label: '"Anna, help out a fellow Bengaluru techie. ₹250 cash, I will guide the lane."',
+        label: '"Boss, help out a tired developer. ₹250 cash and I will navigate."',
         subtitle: 'Humble respectful appeal.',
         effect: {
           moodDelta: +35,
           setMood: 85,
           fare: 250,
           status: 'WON',
-          driverReply: "Namma huduga na? Sari bidi. Sit inside, don't get wet. ₹250 done. Let's go!",
-          kannadaGlossary: "Namma huduga = Our local boy",
+          driverReply: "Alright, sit inside, don't get drenched. ₹250 agreed. Let's roll!",
         },
       },
       {
         id: 'STAGE4_RATING_PROMISE',
-        label: '"I will give 5-star rating on Ola if you take me."',
-        subtitle: 'Promising app ratings to an independent auto.',
+        label: '"I promise to give you a 5-star rating on the ride app!"',
+        subtitle: 'Promising app ratings to an independent driver.',
         effect: {
           moodDelta: -40,
           setMood: 0,
           status: 'LOST',
-          driverReply: "Naanu Ola-le illa guru! Rating thondu en maadbeku? Hogu!",
+          driverReply: "I do not even use those corporate apps! What will I do with digital stars? Go away!",
         },
       },
       {
         id: 'STAGE4_MIDDLE_FAIR',
-        label: '"Anna, ₹220 direct, won\'t cancel on you."',
+        label: '"Boss, ₹220 direct cash, I will not cancel on you."',
         subtitle: 'Solid fair price.',
         effect: {
           moodDelta: +30,
           setMood: 82,
           fare: 220,
           status: 'WON',
-          driverReply: "Sari, baa. Meter mele little extra is enough for hot coffee in this rain. Hop in!",
+          driverReply: "Fine, get in. A little extra is fair for a hot cup of tea in this downpour. Let's go!",
         },
       },
     ],
@@ -235,7 +225,7 @@ export function negotiationReducer(state, action) {
         history: [
           {
             speaker: 'driver',
-            text: "Another auto pulls up in the rain: 'Silk Board to Indiranagar? ₹450 flat, meter won't go in this traffic!'",
+            text: "Another driver pulls up in the rain: 'Late night surge? ₹450 flat, meter will not go in this gridlock!'",
           },
         ],
       };
@@ -245,4 +235,3 @@ export function negotiationReducer(state, action) {
       return state;
   }
 }
-

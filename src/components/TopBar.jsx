@@ -63,8 +63,8 @@ export function TopBar({ onJudgeReset }) {
         {/* Project Breadcrumb / Stage Info */}
         <div className="hidden sm:flex items-center gap-1.5 bg-[#1F2133] px-2.5 py-1 border-2 border-black shadow-[2px_2px_0px_#000] font-mono text-[11px]">
           <Layers className="w-3.5 h-3.5 text-amber-400" />
-          <span className="text-slate-400 font-bold">STAGE 1:</span>
-          <span className="text-amber-300 font-black">silk_board_junction.js</span>
+          <span className="text-slate-400 font-bold">BRANCH:</span>
+          <span className="text-amber-300 font-black">checkout_service.js</span>
           {trust < 80 && (
             <span className={`text-[10px] px-1 font-bold ${isBetrayal ? 'bg-rose-500 text-white' : 'bg-amber-400 text-black'}`}>
               UNSAVED
@@ -73,7 +73,7 @@ export function TopBar({ onJudgeReset }) {
         </div>
       </div>
 
-      {/* 2. Center Status Pill: Current Area & Weather */}
+      {/* 2. Center Status Pill: Current Area & Status */}
       <div
         data-physics-id="topbar-breadcrumbs"
         className={`hidden md:flex items-center gap-2 px-3 py-1 border-2 border-black font-mono text-[11px] font-bold transition-transform shadow-[2px_2px_0px_#000] ${
@@ -85,7 +85,7 @@ export function TopBar({ onJudgeReset }) {
         }`}
       >
         <Radio className="w-3.5 h-3.5 animate-spin" />
-        <span>AREA: KORAMANGALA 🌧️</span>
+        <span>ZONE: PROD DEPLOYMENT ⚡</span>
         <span className="text-[10px] opacity-75 font-normal">| {mood}</span>
       </div>
 

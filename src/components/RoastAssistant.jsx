@@ -153,6 +153,20 @@ export function RoastAssistant() {
               "{displayedText || dialogue.text}"
             </p>
           </div>
+
+          {/* Reaction Meme Stamp */}
+          {dialogue.meme && (
+            <div className="hidden sm:flex flex-col items-center shrink-0 w-24 bg-black border-2 border-black shadow-[3px_3px_0px_#000] overflow-hidden">
+              <img
+                src={dialogue.meme}
+                alt="Reaction Meme"
+                className="w-full h-16 object-cover"
+              />
+              <span className="w-full bg-[#FACC15] text-black font-black text-[7px] text-center py-0.5 px-0.5 truncate font-mono uppercase">
+                {dialogue.memeCaption || 'REACTION'}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </>

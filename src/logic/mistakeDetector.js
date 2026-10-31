@@ -3,15 +3,15 @@
  * 100% Client-side, predictable, zero external dependencies.
  */
 
-export const DEFAULT_CODE_SNIPPET = `// Namma Fragile OS — Bengaluru Traffic Routing
-function calculateSilkBoardDelay(distanceKm) {
-  const signalWait = 25; // minutes
-  const rainMultiplier = 2.5;
+export const DEFAULT_CODE_SNIPPET = `// Production Payment Checkout Service
+function processCheckout(cartTotal, isMember) {
+  const discountRate = 0.15;
+  const taxRate = 0.08;
 
-  if (distanceKm > 3) {
-    const totalDelay = (distanceKm * 12) + signalWait * rainMultiplier;
-    return totalDelay;
-  // Ayyo! Missing closing bracket '}' for the if block
+  if (cartTotal > 100) {
+    const finalAmount = (cartTotal * (1 - discountRate)) * (1 + taxRate);
+    return finalAmount;
+  // Missing closing bracket '}' for the if block
 `;
 
 /**
@@ -25,7 +25,9 @@ export function validateCode(code) {
     return {
       valid: false,
       errorType: 'EMPTY_CODE',
-      message: 'Empty editor buffer. Even auto drivers have a destination!',
+      message: 'Empty editor buffer. Even junior devs write at least console.log("hello")!',
+      meme: '/memes/this_is_fine.jpg',
+      memeCaption: 'Empty file. 0 bugs, but 0 features.',
     };
   }
 
@@ -34,8 +36,10 @@ export function validateCode(code) {
     return {
       valid: false,
       errorType: 'DEPRECATED_VAR',
-      message: 'SyntaxError: Illegal use of "var". This OS runs modern ES2024. Use "const" or "let"!',
+      message: 'SyntaxError: Illegal use of "var". What year is it?! Use "const" or "let"!',
       penalty: 20,
+      meme: '/memes/drake_var.jpg',
+      memeCaption: 'const & let? ❌ | var in 2026? ✔️',
     };
   }
 
@@ -65,6 +69,8 @@ export function validateCode(code) {
           errorType: 'UNBALANCED_BRACKET',
           message: `SyntaxError: Unexpected closing bracket "${char}". No matching opening bracket found.`,
           penalty: 15,
+          meme: '/memes/this_is_fine.jpg',
+          memeCaption: 'Syntax error: unexpected bracket. This is fine.',
         };
       }
       const top = stack.pop();
@@ -74,6 +80,8 @@ export function validateCode(code) {
           errorType: 'UNBALANCED_BRACKET',
           message: `SyntaxError: Mismatched brackets. Expected closing for "${top.char}" but got "${char}".`,
           penalty: 15,
+          meme: '/memes/this_is_fine.jpg',
+          memeCaption: 'Mismatched brackets. This is fine.',
         };
       }
     }
@@ -86,6 +94,8 @@ export function validateCode(code) {
       errorType: 'UNBALANCED_BRACKET',
       message: `SyntaxError: Missing closing bracket for "${unclosed.char}". Don't leave your code hanging!`,
       penalty: 15,
+      meme: '/memes/this_is_fine.jpg',
+      memeCaption: 'Missing bracket. This is fine.',
     };
   }
 
@@ -105,6 +115,8 @@ export function validateCode(code) {
         errorType: 'MISSING_SEMICOLON',
         message: `StyleError on line ${i + 1}: Missing mandatory semicolon after variable declaration.`,
         penalty: 10,
+        meme: '/memes/spiderman.jpg',
+        memeCaption: 'JavaScript without semicolons',
       };
     }
   }
@@ -112,6 +124,8 @@ export function validateCode(code) {
   return {
     valid: true,
     message: 'Code compiled cleanly! System integrity satisfied.',
+    meme: '/memes/roll_safe.jpg',
+    memeCaption: 'Code compiled on first try!',
   };
 }
 

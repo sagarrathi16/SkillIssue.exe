@@ -2,7 +2,7 @@ import { OSMood } from '../app/osStateMachine.js';
 
 /**
  * Deterministic Dialogue & Roast Table for Namma Fragile OS
- * Inspects mood, recent event history, and specific behavioral infractions.
+ * Universally understood developer humor & meme pairings.
  */
 
 export function selectDialogue(state) {
@@ -19,22 +19,23 @@ export function selectDialogue(state) {
   const previousEvent = eventHistory[1];
 
   // =========================================================================
-  // 1. HIGH-PRIORITY BEHAVIORAL CALLBACKS (Memory of specific actions)
+  // 1. HIGH-PRIORITY BEHAVIORAL CALLBACKS
   // =========================================================================
 
   // A. Touching the Forbidden Prod DB Button
   if (latestEvent?.type === 'FORBIDDEN_ACTION') {
     return {
       id: 'touch_prod_db',
-      text: "Ayyo Rama! Who gave you sudo privileges? Even an intern in Marathahalli knows not to touch Prod DB!",
+      text: "WHO GAVE YOU ROOT PRIVILEGES?! You actually clicked Drop Prod DB! Even an intern in Marathahalli knows not to touch Prod DB! Peak disaster girl energy.",
       tag: "CRITICAL_VIOLATION",
-      kannadaGlossary: "Ayyo Rama = Oh Lord Rama!",
       avatarMood: 'betrayed',
       soundType: 'warning',
+      meme: '/memes/disaster_girl.jpg',
+      memeCaption: 'Just dropped production database on a Friday afternoon',
     };
   }
 
-  // B. Repeated identical mistake in a row (e.g. 2 syntax errors of same type)
+  // B. Repeated identical mistake in a row
   if (
     latestEvent?.type === 'MISTAKE' &&
     previousEvent?.type === 'MISTAKE' &&
@@ -43,10 +44,12 @@ export function selectDialogue(state) {
     const errorName = latestEvent?.detail?.mistakeType?.replace(/_/g, ' ') || 'syntax issue';
     return {
       id: 'repeated_same_mistake',
-      text: `I literally just told you about the ${errorName}. Were you listening or just decorating your mechanical keyboard?`,
+      text: `I literally just told you about the ${errorName}. Did you think re-running broken code would magically fix itself? Spiderman pointing at Spiderman.`,
       tag: "REPEATED_MISTAKE",
       avatarMood: 'annoyed',
       soundType: 'sigh',
+      meme: '/memes/spiderman.jpg',
+      memeCaption: 'You blaming the compiler vs Compiler blaming you',
     };
   }
 
@@ -57,10 +60,12 @@ export function selectDialogue(state) {
   ) {
     return {
       id: 'ignored_warning_callback',
-      text: "You dismissed my warning toast and then ran the exact same broken code. Peak Koramangala founder behavior!",
+      text: "You dismissed my warning toast and then ran the exact same broken code. Peak Koramangala founder behavior! Pure clown energy.",
       tag: "DISMISSED_WARNING",
       avatarMood: 'betrayed',
       soundType: 'warning',
+      meme: '/memes/clown_makeup.jpg',
+      memeCaption: 'Dismisses warning -> Runs same broken code -> Wonder why it crashed',
     };
   }
 
@@ -68,34 +73,38 @@ export function selectDialogue(state) {
   if (latestEvent?.type === 'MISTAKE' && mistakeCount === 1) {
     return {
       id: 'first_syntax_error',
-      text: "Ayyo, one missing bracket. Let's not start the day like this, guru.",
+      text: "One missing closing bracket. Are you coding or just testing my emotional stability? This is fine.",
       tag: "FIRST_BLOOD",
-      kannadaGlossary: "Ayyo = Alas! / Guru = Bro, friend",
       avatarMood: 'annoyed',
       soundType: 'sigh',
+      meme: '/memes/this_is_fine.jpg',
+      memeCaption: 'Syntax error detected. Everything is totally fine.',
     };
   }
 
-  // D. Rapid Click / Spamming Buttons
+  // E. Rapid Click / Spamming Buttons
   if (latestEvent?.type === 'RAPID_CLICK') {
     return {
       id: 'rapid_click_roast',
-      text: "Meter haakamma! Even Silk Board traffic moves faster than your cognitive processing right now.",
+      text: "Hammering buttons won't compile code! Even Silk Board traffic moves faster than your cognitive processing right now. Panik mode on!",
       tag: "SPAM_CLICK_ABUSE",
-      kannadaGlossary: "Meter haakamma = Turn on the meter, please!",
       avatarMood: 'annoyed',
       soundType: 'beep',
+      meme: '/memes/panik_kalm.png',
+      memeCaption: 'Code does not compile -> Spam click Run -> OS collapses',
     };
   }
 
-  // E. Apology Outcomes
+  // F. Apology Outcomes
   if (latestEvent?.type === 'APOLOGY_FAILED') {
     return {
       id: 'insincere_apology',
-      text: "That apology had less commitment than a Swiggy delivery rider during heavy rain. Say it like you mean it, boss!",
+      text: "That apology had zero sincerity. Even a junior dev apologizing to the CTO puts more effort into it. Write a real apology or draw 25 cards!",
       tag: "APOLOGY_REJECTED",
       avatarMood: 'betrayed',
       soundType: 'sigh',
+      meme: '/memes/draw_25.jpg',
+      memeCaption: 'Write a real apology OR draw 25 cards',
     };
   }
 
@@ -104,13 +113,14 @@ export function selectDialogue(state) {
       id: 'apology_forgiven_closing',
       text: "Apology accepted. Toolbar restored. Don't make me call the auto anna again.",
       tag: "RESTORED",
-      kannadaGlossary: "Auto anna = Rickshaw driver",
       avatarMood: 'recovering',
       soundType: 'victory',
+      meme: '/memes/roll_safe.jpg',
+      memeCaption: 'Can not have runtime bugs if you apologize to the OS',
     };
   }
 
-  // F. Judge Speedrun / Forced Meltdown Trigger
+  // G. Judge Speedrun / Forced Meltdown Trigger
   if (latestEvent?.type === 'DEMO_TRIGGER_MELTDOWN') {
     return {
       id: 'speedrun_meltdown',
@@ -118,6 +128,8 @@ export function selectDialogue(state) {
       tag: "SPEEDRUN_COLLAPSE",
       avatarMood: 'crying',
       soundType: 'crash',
+      meme: '/memes/cat_yelling.jpg',
+      memeCaption: 'The OS screaming at you after the collapse',
     };
   }
 
@@ -129,11 +141,12 @@ export function selectDialogue(state) {
     case OSMood.BENGALURU_BOSS_FIGHT:
       return {
         id: 'auto_boss_start',
-        text: "Indiranagar ah? Heavy rain outside. ₹450 flat cash, no meter. Won't go. Ola cancel maadbeda!",
+        text: "SURGE PRICING BOSS FIGHT! Heavy rain outside, 0 drivers available, ₹450 flat cash, no meter. Cancel if you dare!",
         tag: "BOSS_FIGHT",
-        kannadaGlossary: "Maadbeda = Don't do it!",
         avatarMood: 'auto_driver',
         soundType: 'honk',
+        meme: '/memes/cat_yelling.jpg',
+        memeCaption: 'Surge pricing boss fight activated',
       };
 
     case OSMood.MENTAL_BREAKDOWN:
@@ -143,6 +156,8 @@ export function selectDialogue(state) {
         tag: "MELTDOWN",
         avatarMood: 'crying',
         soundType: 'crash',
+        meme: '/memes/cat_yelling.jpg',
+        memeCaption: 'I am not crashing, I am emotionally unavailable',
       };
 
     case OSMood.PERSONAL_BETRAYAL:
@@ -152,26 +167,30 @@ export function selectDialogue(state) {
         tag: "BETRAYAL",
         avatarMood: 'betrayed',
         soundType: 'warning',
+        meme: '/memes/draw_25.jpg',
+        memeCaption: 'Fix your code OR draw 25 cards',
       };
 
     case OSMood.SLIGHTLY_ANNOYED:
       if (mistakeCount === 1) {
         return {
           id: 'first_syntax_error',
-          text: "Ayyo, one missing bracket. Let's not start the day like this, guru.",
+          text: "One missing closing bracket. Are you coding or just testing my emotional stability? This is fine.",
           tag: "FIRST_BLOOD",
-          kannadaGlossary: "Ayyo = Alas! / Guru = Bro, friend",
           avatarMood: 'annoyed',
           soundType: 'sigh',
+          meme: '/memes/this_is_fine.jpg',
+          memeCaption: 'One syntax error. This is totally fine.',
         };
       }
       return {
         id: 'annoyed_general',
-        text: "Macha, if you keep writing code like this, Infosys will reject your resume automatically.",
+        text: "If you keep writing code like this, even ChatGPT will refuse to autocomplete your functions.",
         tag: "ANNOYED",
-        kannadaGlossary: "Macha = Dude / Bro",
         avatarMood: 'annoyed',
         soundType: 'beep',
+        meme: '/memes/this_is_fine.jpg',
+        memeCaption: 'This is fine. Totally fine.',
       };
 
     case OSMood.RECOVERY:
@@ -179,9 +198,10 @@ export function selectDialogue(state) {
         id: 'recovering_state',
         text: "Apology accepted. Toolbar restored. Don't make me call the auto anna again.",
         tag: "RESTORED",
-        kannadaGlossary: "Auto anna = Rickshaw driver",
         avatarMood: 'recovering',
         soundType: 'victory',
+        meme: '/memes/roll_safe.jpg',
+        memeCaption: 'Smart developer fixes mistakes immediately',
       };
 
     case OSMood.CALM:
@@ -189,18 +209,22 @@ export function selectDialogue(state) {
       if (trust === 100 && mistakeCount === 0) {
         return {
           id: 'calm_welcome',
-          text: "Namma Fragile OS 2.0 active. Clean workspace. Code carefully—I remember everything.",
+          text: "Fragile OS Arcade active. Clean workspace. Code carefully—I remember every mistake.",
           tag: "CALM_READY",
           avatarMood: 'chill',
           soundType: 'beep',
+          meme: '/memes/this_is_fine.jpg',
+          memeCaption: '100% Trust. No bugs yet.',
         };
       }
       return {
         id: 'calm_guarded',
-        text: "Everything is quiet for now. But I am keeping an eye on line 4.",
+        text: "Everything is quiet for now. But I am keeping an eye on your syntax.",
         tag: "WATCHFUL",
         avatarMood: 'chill',
         soundType: 'beep',
+        meme: '/memes/this_is_fine.jpg',
+        memeCaption: 'Watching your keystrokes...',
       };
   }
 }

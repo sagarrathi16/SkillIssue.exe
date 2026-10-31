@@ -19,6 +19,24 @@ export function SystemToast({ onDismissWarning }) {
     }
   };
 
+  const getToastMeme = () => {
+    if (activeWarning.meme) return activeWarning.meme;
+    switch (activeWarning.mistakeType) {
+      case 'DEPRECATED_VAR':
+        return '/memes/drake_var.jpg';
+      case 'FORBIDDEN_ACTION':
+        return '/memes/disaster_girl.jpg';
+      case 'IGNORED_WARNING':
+        return '/memes/clown_makeup.jpg';
+      case 'RAPID_CLICK':
+        return '/memes/panik_kalm.png';
+      default:
+        return '/memes/this_is_fine.jpg';
+    }
+  };
+
+  const toastMeme = getToastMeme();
+
   return (
     <div
       data-physics-id="system-toast-banner"
@@ -27,18 +45,19 @@ export function SystemToast({ onDismissWarning }) {
       }`}
     >
       <div
-        className={`p-4 border-2 border-black shadow-[5px_5px_0px_#000] flex items-start gap-3 select-none ${
+        className={`p-4 border-2 border-black shadow-[5px_5px_0px_#000] flex items-start gap-3.5 select-none ${
           isBetrayal
             ? 'bg-[#FF8080] text-black'
             : 'bg-[#FDE047] text-black'
         }`}
       >
-        <div className="p-2 bg-black text-white border-2 border-black shadow-[2px_2px_0px_#000] shrink-0">
-          {isBetrayal ? (
-            <ShieldAlert className="w-5 h-5 text-rose-400 animate-pulse" />
-          ) : (
-            <AlertTriangle className="w-5 h-5 text-yellow-300 animate-bounce" />
-          )}
+        {/* Meme Thumbnail Stamp */}
+        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-black border-2 border-black shadow-[2px_2px_0px_#000] shrink-0 overflow-hidden">
+          <img
+            src={toastMeme}
+            alt="Meme"
+            className="w-full h-full object-cover"
+          />
         </div>
 
         <div className="flex-1 min-w-0">

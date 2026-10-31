@@ -149,7 +149,7 @@ export function StatusPanel() {
         </div>
       </div>
 
-      {/* 4. Bengaluru City Real-Time Telemetry */}
+      {/* 4. Production Server & Developer Vibe Telemetry */}
       <div
         data-physics-id="status-city-card"
         className={`p-3 bg-[#1A1C2C] border-2 border-black shadow-[3px_3px_0px_#000] flex flex-col gap-2 transition-transform ${
@@ -157,25 +157,25 @@ export function StatusPanel() {
         }`}
       >
         <div className="flex items-center gap-1.5 pb-1 border-b-2 border-black text-[#FACC15] font-black text-[10px] uppercase">
-          <MapPin className="w-3.5 h-3.5" />
-          <span>BENGALURU TELEMETRY</span>
+          <Zap className="w-3.5 h-3.5" />
+          <span>PRODUCTION TELEMETRY</span>
         </div>
 
         <div className="flex items-center justify-between text-[11px]">
-          <span className="text-slate-400 flex items-center gap-1">
-            <CloudRain className="w-3.5 h-3.5 text-sky-400" /> Weather:
+          <span className="text-slate-400">Dev Emotion:</span>
+          <span className="text-sky-300 font-black">{trust >= 70 ? 'Caffeinated' : trust >= 35 ? 'Sweating' : 'Panicking'}</span>
+        </div>
+
+        <div className="flex items-center justify-between text-[11px]">
+          <span className="text-slate-400">Deploy Pipeline:</span>
+          <span className="text-amber-400 font-black">145 min delay</span>
+        </div>
+
+        <div className="flex items-center justify-between text-[11px]">
+          <span className="text-slate-400">Tech Lead Patience:</span>
+          <span className={`font-black ${trust <= 34 ? 'text-rose-400 animate-pulse' : 'text-emerald-400'}`}>
+            {trust}% Remaining
           </span>
-          <span className="text-sky-300 font-black">Monsoon Rain</span>
-        </div>
-
-        <div className="flex items-center justify-between text-[11px]">
-          <span className="text-slate-400">Silk Board Gridlock:</span>
-          <span className="text-amber-400 font-black">145 mins</span>
-        </div>
-
-        <div className="flex items-center justify-between text-[11px]">
-          <span className="text-slate-400">Auto Meter Rule:</span>
-          <span className="text-rose-400 font-black">₹450 Flat (No Meter)</span>
         </div>
       </div>
     </aside>
