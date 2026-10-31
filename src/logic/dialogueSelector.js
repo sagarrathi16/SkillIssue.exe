@@ -99,12 +99,12 @@ export function selectDialogue(state) {
     };
   }
 
-  if (latestEvent?.type === 'APOLOGY_ACCEPTED') {
+  if (latestEvent?.type === 'APOLOGY_ACCEPTED' || latestEvent?.type === 'RECOVERY_STARTED') {
     return {
-      id: 'apology_forgiven',
-      text: "Sari bidi (Fine, leave it). I will restore your buttons. But trust is still buffering. Don't push your luck.",
-      tag: "FORGIVEN",
-      kannadaGlossary: "Sari bidi = Alright, leave it / forget it.",
+      id: 'apology_forgiven_closing',
+      text: "Apology accepted. Toolbar restored. Don't make me call the auto anna again.",
+      tag: "RESTORED",
+      kannadaGlossary: "Auto anna = Rickshaw driver",
       avatarMood: 'recovering',
       soundType: 'victory',
     };
@@ -177,8 +177,9 @@ export function selectDialogue(state) {
     case OSMood.RECOVERY:
       return {
         id: 'recovering_state',
-        text: "Reassembling UI chrome with spring physics. Breathe in, breathe out. Keep your code clean now.",
-        tag: "RESTORE",
+        text: "Apology accepted. Toolbar restored. Don't make me call the auto anna again.",
+        tag: "RESTORED",
+        kannadaGlossary: "Auto anna = Rickshaw driver",
         avatarMood: 'recovering',
         soundType: 'victory',
       };

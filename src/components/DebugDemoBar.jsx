@@ -18,9 +18,17 @@ const SAMPLE_MISTAKES = [
   { type: 'UNRESOLVED_PROMISE', detail: 'UnhandledPromiseRejection: Memory leak in async routine', penalty: 15 },
 ];
 
-export function DebugDemoBar() {
+export function DebugDemoBar({ onJudgeReset }) {
   const { state, actions } = useOS();
   const [mistakeIndex, setMistakeIndex] = useState(0);
+
+  const handleReset = () => {
+    if (onJudgeReset) {
+      onJudgeReset();
+    } else {
+      actions.resetDemo();
+    }
+  };
 
   const handleForceMistake = () => {
     const mistake = SAMPLE_MISTAKES[mistakeIndex % SAMPLE_MISTAKES.length];
@@ -158,14 +166,17 @@ export function DebugDemoBar() {
           <span>Simulate Recovery</span>
         </button>
 
-        {/* Reset Demo */}
+        {/* Reset for Next Judge */}
         <button
-          onClick={actions.resetDemo}
-          className="flex items-center gap-1.5 px-3 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 transition-all active:scale-95 cursor-pointer font-bold"
-          title="Reset the entire demo to pristine 100% Trust"
+          onClick={handleReset}
+          className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400/50 transition-all active:scale-95 cursor-pointer font-bold shadow-md shadow-emerald-950/60"
+          title="Instant <100ms Reset for Next Judge (Shift + Escape)"
         >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>Hard Reset Demo</span>
+          <Sparkles className="w-3.5 h-3.5 text-amber-200" />
+          <span>Reset for Next Judge</span>
+          <kbd className="hidden xl:inline-block px-1 py-0.2 rounded bg-emerald-800 text-[10px] text-emerald-100 border border-emerald-400/40">
+            Shift+Esc
+          </kbd>
         </button>
 
         {/* Hotkey Hint */}

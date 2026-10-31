@@ -313,3 +313,4 @@ class AudioManager {
 
 // Global Singleton
 export const audioManager = new AudioManager();
+

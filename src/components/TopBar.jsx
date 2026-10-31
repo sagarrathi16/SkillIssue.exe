@@ -12,9 +12,17 @@ import {
   Wand2
 } from 'lucide-react';
 
-export function TopBar() {
+export function TopBar({ onJudgeReset }) {
   const { state, actions } = useOS();
   const { mood, trust } = state;
+
+  const handleReset = () => {
+    if (onJudgeReset) {
+      onJudgeReset();
+    } else {
+      actions.resetDemo();
+    }
+  };
 
   // Rapid click tracker for toolbar buttons
   const clickTrackerRef = useRef(createClickTracker(4, 1500));
@@ -122,12 +130,12 @@ export function TopBar() {
 
         {/* 4. SACRED SAFE ZONE: Reset Demo Button (NEVER COLLAPSES - NO data-physics-id) */}
         <button
-          onClick={actions.resetDemo}
-          className="flex items-center gap-1.5 px-3 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 font-bold transition-all active:scale-95 cursor-pointer font-mono text-[11px] shadow-sm ml-1"
-          title="Instant 1-Click Demo Reset (Sacred Safe Zone)"
+          onClick={handleReset}
+          className="flex items-center gap-1.5 px-3 py-1 rounded bg-emerald-600/30 hover:bg-emerald-500/40 text-emerald-300 border border-emerald-500/50 font-bold transition-all active:scale-95 cursor-pointer font-mono text-[11px] shadow-sm ml-1"
+          title="Instant <100ms Demo Reset for Next Judge (Shift + Escape)"
         >
           <RotateCcw className="w-3.5 h-3.5" />
-          <span>Reset Demo</span>
+          <span>Reset for Judge</span>
         </button>
       </div>
     </div>

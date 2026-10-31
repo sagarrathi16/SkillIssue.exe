@@ -37,6 +37,20 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
     timestamp: null,
   });
 
+  // Listen for full judge demo reset event
+  React.useEffect(() => {
+    const handleFullReset = () => {
+      setCode(DEFAULT_CODE_SNIPPET);
+      setConsoleOutput({
+        status: 'idle',
+        text: 'Terminal ready. Click "Run / Compile" to evaluate JavaScript buffer.',
+        timestamp: null,
+      });
+    };
+    window.addEventListener('namma_os_reset', handleFullReset);
+    return () => window.removeEventListener('namma_os_reset', handleFullReset);
+  }, []);
+
   const lines = code.split('\n');
 
   const updateCode = (newCode) => {

@@ -1,16 +1,30 @@
 import React, { useEffect } from 'react';
 import { OSProvider, useOS } from './osStateMachine';
+import { physicsManager } from '../physics/PhysicsWorld';
 import { DebugDemoBar } from '../components/DebugDemoBar';
 import { Workspace } from '../components/Workspace';
 
 function OSContainer() {
   const { actions } = useOS();
 
-  // Listen for Emergency Chaos hotkeys: ~ or Ctrl+Shift+K
+  const handleFullJudgeReset = () => {
+    physicsManager.hardReset();
+    actions.resetDemo();
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('namma_os_reset'));
+    }
+  };
+
+  // Global hotkey listeners
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Hotkey ~ (Tilde) or Ctrl+Shift+K for instant judge chaos
-      if (e.key === '`' || e.key === '~' || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'k')) {
+      // Shift + Escape: Instant Full Reset for Next Judge (<100ms)
+      if (e.shiftKey && (e.key === 'Escape' || e.code === 'Escape')) {
+        e.preventDefault();
+        handleFullJudgeReset();
+      }
+      // ~ (Tilde) or Ctrl+Shift+K: Emergency Chaos Hotkey
+      else if (e.key === '`' || e.key === '~' || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'k')) {
         e.preventDefault();
         actions.triggerBossFight();
       }
@@ -23,10 +37,10 @@ function OSContainer() {
   return (
     <div className="w-screen h-screen flex flex-col bg-[#0B0F19] text-gray-100 overflow-hidden select-none">
       {/* 1. Top Debug & Demo Bar */}
-      <DebugDemoBar />
+      <DebugDemoBar onJudgeReset={handleFullJudgeReset} />
 
       {/* 2. Full Desktop Workspace Shell */}
-      <Workspace />
+      <Workspace onJudgeReset={handleFullJudgeReset} />
     </div>
   );
 }

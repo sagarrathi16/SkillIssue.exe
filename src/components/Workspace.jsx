@@ -10,7 +10,7 @@ import { RoastAssistant } from './RoastAssistant';
 import { RecoveryModal } from './RecoveryModal';
 import { AlertOctagon, Flame } from 'lucide-react';
 
-export function Workspace() {
+export function Workspace({ onJudgeReset }) {
   const { state, actions } = useOS();
   const { mood, trust } = state;
 
@@ -70,7 +70,7 @@ export function Workspace() {
       )}
 
       {/* 1. Top Navigation Bar */}
-      <TopBar />
+      <TopBar onJudgeReset={onJudgeReset} />
 
       {/* 2. Main Workspace Horizontal Layout */}
       <div className="flex-1 flex overflow-hidden relative">

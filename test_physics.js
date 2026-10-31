@@ -106,8 +106,8 @@ console.log('✅ Matter.js 2D rigid-bodies and boundary walls generated with pre
 // Test 5: Step RAF physics loop
 console.assert(rafCallbacks.length > 0, 'RAF callback must be registered');
 const initialY = cachedData.body.position.y;
-// Trigger 15 RAF ticks so gravity pulls it down
-for (let i = 0; i < 15; i++) {
+// Trigger 35 RAF ticks so gravity pulls it down after the initial upward pop
+for (let i = 0; i < 35; i++) {
   const cb = rafCallbacks.shift();
   if (cb) cb(Date.now() + 16 * (i + 1));
 }
