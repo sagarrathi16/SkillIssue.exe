@@ -48,6 +48,7 @@ export const ACTION_TYPES = {
   APOLOGY_ATTEMPTED: 'APOLOGY_ATTEMPTED',
   START_RECOVERY: 'START_RECOVERY',
   RECOVERY_COMPLETED: 'RECOVERY_COMPLETED',
+  CHALLENGE_SOLVED: 'CHALLENGE_SOLVED',
   TRIGGER_MELTDOWN: 'TRIGGER_MELTDOWN',
   TRIGGER_BOSS_FIGHT: 'TRIGGER_BOSS_FIGHT',
   HARD_RESET_DEMO: 'HARD_RESET_DEMO',
@@ -325,6 +326,30 @@ export function osReducer(state, action) {
       };
     }
 
+    case ACTION_TYPES.CHALLENGE_SOLVED: {
+      const bonus = action.payload?.trustBonus || 15;
+      const nextTrust = Math.min(100, state.trust + bonus);
+      const nextMood = calculateMoodFromTrust(nextTrust, state.mood);
+      return {
+        ...state,
+        trust: nextTrust,
+        mood: nextMood,
+        activeWarning: null,
+        isCollapsed: nextTrust <= 34,
+        eventHistory: pushEventHistory(state.eventHistory, {
+          type: 'CHALLENGE_SOLVED',
+          detail: { 
+            challengeIndex: action.payload?.challengeIndex,
+            title: action.payload?.title,
+            trustBonus: bonus,
+          },
+          trustBefore: state.trust,
+          trustAfter: nextTrust,
+          trustDelta: bonus,
+        }),
+      };
+    }
+
     case ACTION_TYPES.HARD_RESET_DEMO: {
       return {
         ...INITIAL_OS_STATE,
@@ -408,6 +433,13 @@ export function OSProvider({ children }) {
     dispatch({ type: ACTION_TYPES.RECOVERY_COMPLETED });
   }, []);
 
+  const solveChallenge = useCallback((challengeIndex, title, trustBonus = 15) => {
+    dispatch({
+      type: ACTION_TYPES.CHALLENGE_SOLVED,
+      payload: { challengeIndex, title, trustBonus },
+    });
+  }, []);
+
   const resetDemo = useCallback(() => {
     dispatch({ type: ACTION_TYPES.HARD_RESET_DEMO });
   }, []);
@@ -426,6 +458,7 @@ export function OSProvider({ children }) {
       attemptApology,
       startRecovery,
       completeRecovery,
+      solveChallenge,
       resetDemo,
     },
   };

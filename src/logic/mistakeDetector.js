@@ -3,16 +3,108 @@
  * 100% Client-side, predictable, zero external dependencies.
  */
 
-export const DEFAULT_CODE_SNIPPET = `// Production Payment Checkout Service
-function processCheckout(cartTotal, isMember) {
-  const discountRate = 0.15;
-  const taxRate = 0.08;
+export const CODING_CHALLENGES = [
+  {
+    id: 1,
+    title: 'The Coffee Machine Compiler',
+    difficulty: 'Novice Hacker',
+    tag: 'BRACKET MATCHING',
+    starterCode: `// =========================================================================
+// ☕ CHALLENGE 1/4: THE COFFEE MACHINE COMPILER
+// TASK: Fix the syntax error in calculateCoffeeFuel()!
+// There is an unclosed bracket hanging in the if-block below.
+// Close all brackets properly and click "▶ RUN CODE"!
+// =========================================================================
+function calculateCoffeeFuel(cupsDrank, hoursAwake) {
+  const caffeinePerCup = 95; // mg
+  const burnoutThreshold = 400; // mg
 
-  if (cartTotal > 100) {
-    const finalAmount = (cartTotal * (1 - discountRate)) * (1 + taxRate);
-    return finalAmount;
-  // Missing closing bracket '}' for the if block
-`;
+  if (cupsDrank * caffeinePerCup > burnoutThreshold) {
+    const jitterFactor = hoursAwake * 1.5;
+    return "Caffeine overload! Jitter level: " + jitterFactor;
+  // ⚠️ SYNTAX FRACTURE: Missing closing '}' bracket below!
+}
+
+console.log(calculateCoffeeFuel(5, 14));`,
+    congratulation: '☕ BOOM! Coffee engine compiled without a hitch! The caffeine is flowing! Trust +15 HP.',
+    successOutput: '✨ COMPILED SUCCESSFULLY!\nOutput: Caffeine overload! Jitter level: 21',
+  },
+  {
+    id: 2,
+    title: 'The "var" Purge',
+    difficulty: 'Modern Standards',
+    tag: 'LEGACY REFACTOR',
+    starterCode: `// =========================================================================
+// 🚫 CHALLENGE 2/4: THE "var" PURGE
+// TASK: In 2026, the OS refuses to compile code using deprecated 'var'!
+// Refactor all 'var' declarations to 'const' or 'let', ensure all statements
+// have semicolons, and click "▶ RUN CODE"!
+// =========================================================================
+var hackerName = "CaffeineNinja";
+var energyDrinks = 4;
+var sleepHours = 2;
+
+function checkSurvival() {
+  var minimumEnergy = 12;
+  var currentEnergy = (energyDrinks * 3) + sleepHours;
+  return currentEnergy >= minimumEnergy;
+}
+
+console.log(hackerName, "survival check:", checkSurvival());`,
+    congratulation: '🚫 Legacy syntax purged! Modern ES2026 standards upheld! Tech Lead approved! Trust +15 HP.',
+    successOutput: '✨ COMPILED SUCCESSFULLY!\nOutput: CaffeineNinja survival check: true',
+  },
+  {
+    id: 3,
+    title: 'Prize Pool Splitter',
+    difficulty: 'Bracket Alignment',
+    tag: 'MISMATCH FIX',
+    starterCode: `// =========================================================================
+// 💰 CHALLENGE 3/4: PRIZE POOL SPLITTER
+// TASK: Your hackathon team won 1st place! Fix the mismatched bracket
+// in the splitPrizePool function so everyone can get paid!
+// =========================================================================
+function splitPrizePool(totalPrize, teamSize) {
+  const platformFee = 0.05;
+  const netPool = totalPrize * (1 - platformFee);
+
+  if (teamSize > 0) {
+    const sharePerHacker = (netPool / teamSize);
+    return Math.floor(sharePerHacker);
+  ) // ⚠️ SYNTAX FRACTURE: Mismatched bracket! Expected '}' but got ')'
+}
+
+console.log("Payout per hacker: $" + splitPrizePool(6000, 4));`,
+    congratulation: '💰 Prize money disbursed cleanly! Team morale maximized! Trust +15 HP.',
+    successOutput: '✨ COMPILED SUCCESSFULLY!\nOutput: Payout per hacker: $1425',
+  },
+  {
+    id: 4,
+    title: 'Zero-Day Production Ship',
+    difficulty: 'CodeDay Final Boss',
+    tag: 'DUAL FIX',
+    starterCode: `// =========================================================================
+// 🚀 CHALLENGE 4/4: THE MIDNIGHT PRODUCTION SHIP
+// TASK: Final CodeDay deployment! Fix the missing semicolon AND the unclosed
+// condition bracket in deployService() to ship cleanly!
+// =========================================================================
+function deployService(projectName, commitHash) {
+  const deployTimestamp = 1793429900
+  const isHealthy = true;
+
+  if (projectName && isHealthy {
+    return "DEPLOY SUCCESS: " + projectName + " [" + commitHash + "]";
+  }
+  return "DEPLOY FAILED";
+}
+
+console.log(deployService("SkillIssueCore", "c0deday"));`,
+    congratulation: '🏆 100% SYNTAX MASTERY! You have conquered every CodeDay challenge! The OS is at total peace.',
+    successOutput: '✨ COMPILED SUCCESSFULLY!\nOutput: DEPLOY SUCCESS: SkillIssueCore [c0deday]',
+  },
+];
+
+export const DEFAULT_CODE_SNIPPET = CODING_CHALLENGES[0].starterCode;
 
 /**
  * Validates JavaScript code for deliberate deterministic errors:

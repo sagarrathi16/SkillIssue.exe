@@ -1,42 +1,36 @@
 import React, { useState } from 'react';
 import { useOS, OSMood } from '../app/osStateMachine';
-import { validateCode, DEFAULT_CODE_SNIPPET } from '../logic/mistakeDetector';
-import { Play, CheckCircle2, AlertTriangle, Terminal, Code2, Sparkles } from 'lucide-react';
-
-const SAMPLE_CLEAN_CODE = `// SkillIssue.exe — CodeDay Hackathon Build (Clean)
-function calculateHackathonEnergy(caffeineMg, sleepHours) {
-  const codeDayMultiplier = 2.5;
-
-  if (sleepHours < 3) {
-    const energyLevel = (caffeineMg * 1.5) + (codeDayMultiplier * 10);
-    return energyLevel;
-  }
-  return caffeineMg * 0.8;
-}
-
-console.log("Calculated Hackathon Energy:", calculateHackathonEnergy(250, 2), "XP");`;
-
-const SAMPLE_VAR_CODE = `// SkillIssue.exe — Deprecated Syntax Test
-var hackerName = "CaffeineCoder";
-var bugCount = 42;
-
-function shipHack() {
-  var panicStatus = "critical";
-  return hackerName + " has " + bugCount + " bugs to fix before deadline";
-}`;
+import { validateCode, CODING_CHALLENGES, DEFAULT_CODE_SNIPPET } from '../logic/mistakeDetector';
+import { audioManager } from '../audio/AudioManager';
+import { 
+  Play, 
+  CheckCircle2, 
+  AlertTriangle, 
+  Terminal, 
+  Code2, 
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  RotateCcw,
+  Trophy
+} from 'lucide-react';
 
 export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismissedCode }) {
   const { state, actions } = useOS();
   const { mood } = state;
 
-  const [code, setCode] = useState(DEFAULT_CODE_SNIPPET);
+  const [challengeIndex, setChallengeIndex] = useState(0);
+  const [solvedChallenges, setSolvedChallenges] = useState(new Set());
+  const [congratsBanner, setCongratsBanner] = useState(null);
+
+  const [code, setCode] = useState(CODING_CHALLENGES[0].starterCode);
   const [isJolting, setIsJolting] = useState(false);
   const [errorLine, setErrorLine] = useState(null);
   const [lastError, setLastError] = useState(null);
 
   const [consoleOutput, setConsoleOutput] = useState({
     status: 'idle',
-    text: '👾 Arcade Compiler ready. Click "▶ RUN CODE" to evaluate JavaScript buffer.',
+    text: '👾 Arcade Compiler ready. Read the prompt in the code comment, fix the syntax, and click "▶ RUN CODE"!',
     timestamp: null,
   });
 
@@ -57,13 +51,16 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
   // Listen for full judge demo reset event
   React.useEffect(() => {
     const handleFullReset = () => {
-      setCode(DEFAULT_CODE_SNIPPET);
+      setChallengeIndex(0);
+      setSolvedChallenges(new Set());
+      setCongratsBanner(null);
+      setCode(CODING_CHALLENGES[0].starterCode);
       setErrorLine(null);
       setLastError(null);
       setIsJolting(false);
       setConsoleOutput({
         status: 'idle',
-        text: '👾 Arcade Compiler ready. Click "▶ RUN CODE" to evaluate JavaScript buffer.',
+        text: '👾 Arcade Compiler ready. Read the prompt in the code comment, fix the syntax, and click "▶ RUN CODE"!',
         timestamp: null,
       });
     };
@@ -80,6 +77,51 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
       setLastError(null);
     }
     if (onCodeChange) onCodeChange(newCode);
+  };
+
+  const handlePrevChallenge = () => {
+    if (challengeIndex > 0) {
+      const prevIdx = challengeIndex - 1;
+      setChallengeIndex(prevIdx);
+      setCode(CODING_CHALLENGES[prevIdx].starterCode);
+      setErrorLine(null);
+      setLastError(null);
+      setCongratsBanner(null);
+      setConsoleOutput({
+        status: 'idle',
+        text: `Switched to Challenge ${prevIdx + 1}/${CODING_CHALLENGES.length}: "${CODING_CHALLENGES[prevIdx].title}"`,
+        timestamp: Date.now(),
+      });
+    }
+  };
+
+  const handleNextChallenge = () => {
+    if (challengeIndex < CODING_CHALLENGES.length - 1) {
+      const nextIdx = challengeIndex + 1;
+      setChallengeIndex(nextIdx);
+      setCode(CODING_CHALLENGES[nextIdx].starterCode);
+      setErrorLine(null);
+      setLastError(null);
+      setCongratsBanner(null);
+      setConsoleOutput({
+        status: 'idle',
+        text: `Switched to Challenge ${nextIdx + 1}/${CODING_CHALLENGES.length}: "${CODING_CHALLENGES[nextIdx].title}"`,
+        timestamp: Date.now(),
+      });
+    }
+  };
+
+  const handleResetChallenge = () => {
+    setCode(CODING_CHALLENGES[challengeIndex].starterCode);
+    setErrorLine(null);
+    setLastError(null);
+    setCongratsBanner(null);
+    audioManager.playSfx('beep');
+    setConsoleOutput({
+      status: 'idle',
+      text: `Reset code for Challenge ${challengeIndex + 1}: "${CODING_CHALLENGES[challengeIndex].title}"`,
+      timestamp: Date.now(),
+    });
   };
 
   const handleRunCode = () => {
@@ -111,20 +153,56 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
       setErrorLine(result.lineIndex ?? null);
       setLastError(result);
       triggerJolt();
+      setCongratsBanner(null);
       setConsoleOutput({
         status: 'error',
         text: `❌ COMPILE ERROR [${result.errorType}]:\n${result.message} (-${result.penalty} HP)`,
         timestamp: Date.now(),
       });
     } else {
+      // CODE PASSED!
       setErrorLine(null);
       setLastError(null);
+
+      const activeChallenge = CODING_CHALLENGES[challengeIndex];
+      const isLast = challengeIndex === CODING_CHALLENGES.length - 1;
+
+      // Sfx & award trust
+      audioManager.playVictoryChime();
+      actions.solveChallenge(challengeIndex, activeChallenge.title, 15);
+
+      setSolvedChallenges((prev) => new Set([...prev, activeChallenge.id]));
+
       setConsoleOutput({
         status: 'success',
-        text: `✨ BUILD SUCCESS! Zero syntax anomalies detected.\nOutput: Expected Silk Board Delay: 146.5 mins`,
+        text: `🎉 ${activeChallenge.congratulation}\n${activeChallenge.successOutput}`,
         timestamp: Date.now(),
       });
+
+      setCongratsBanner({
+        show: true,
+        text: activeChallenge.congratulation,
+        isFinal: isLast,
+      });
+
       if (onClearDismissedCode) onClearDismissedCode();
+
+      // Automatically advance to the next challenge after 2.2 seconds!
+      if (!isLast) {
+        setTimeout(() => {
+          setChallengeIndex((prev) => {
+            const nextIdx = prev + 1;
+            setCode(CODING_CHALLENGES[nextIdx].starterCode);
+            setCongratsBanner(null);
+            setConsoleOutput({
+              status: 'idle',
+              text: `🚀 Loaded Challenge ${nextIdx + 1}/${CODING_CHALLENGES.length}: "${CODING_CHALLENGES[nextIdx].title}"! Read the prompt comment and fix the code.`,
+              timestamp: Date.now(),
+            });
+            return nextIdx;
+          });
+        }, 2200);
+      }
     }
   };
 
@@ -168,6 +246,8 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
     ? 'code-glitch-subtle text-amber-100'
     : 'text-amber-100';
 
+  const activeChallenge = CODING_CHALLENGES[challengeIndex];
+
   return (
     <div
       // SACRED SAFE ZONE: NO data-physics-id here! This editor never falls.
@@ -178,7 +258,7 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
         <div className="flex items-center gap-2">
           <div className="bg-[#FACC15] text-black font-black px-2.5 py-0.5 border-2 border-black shadow-[2px_2px_0px_#000] font-mono text-[11px] flex items-center gap-1.5">
             <Code2 className="w-3.5 h-3.5" />
-            <span>editor.js</span>
+            <span>challenge_{challengeIndex + 1}.js</span>
           </div>
           <span className="text-[10px] font-mono text-[#F43F5E] font-bold hidden sm:inline">
             [SAFE ZONE — NEVER COLLAPSES]
@@ -186,32 +266,6 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Quick Snippet Selectors */}
-          <div className="hidden lg:flex items-center gap-1.5 font-mono text-[10px]">
-            <span className="text-slate-400 font-bold">Presets:</span>
-            <button
-              onClick={() => updateCode(DEFAULT_CODE_SNIPPET)}
-              className="neo-btn bg-amber-400 text-black px-2 py-0.5 text-[10px]"
-              title="Code with missing bracket"
-            >
-              {'Missing "}"'}
-            </button>
-            <button
-              onClick={() => updateCode(SAMPLE_VAR_CODE)}
-              className="neo-btn bg-rose-400 text-black px-2 py-0.5 text-[10px]"
-              title="Code using deprecated var"
-            >
-              Illegal "var"
-            </button>
-            <button
-              onClick={() => updateCode(SAMPLE_CLEAN_CODE)}
-              className="neo-btn bg-emerald-400 text-black px-2 py-0.5 text-[10px]"
-              title="Clean valid code"
-            >
-              Valid Code
-            </button>
-          </div>
-
           {/* RUN / COMPILE BUTTON */}
           <button
             onClick={handleRunCode}
@@ -224,8 +278,77 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
         </div>
       </div>
 
+      {/* Challenge Navigation Bar */}
+      <div className="bg-[#141522] border-b-2 border-black px-4 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs select-none font-mono">
+        <div className="flex items-center gap-2">
+          <span className="bg-[#FACC15] text-black font-black px-2 py-0.5 border border-black text-[10px]">
+            QUESTION {challengeIndex + 1}/{CODING_CHALLENGES.length}
+          </span>
+          <span className="font-bold text-white text-[11px]">
+            {activeChallenge.title}
+          </span>
+          <span className="text-[10px] text-amber-300 font-bold hidden sm:inline">
+            [{activeChallenge.tag}]
+          </span>
+          {solvedChallenges.has(activeChallenge.id) && (
+            <span className="text-[10px] bg-[#10B981] text-black font-black px-1.5 py-0.2 border border-black flex items-center gap-1">
+              <CheckCircle2 className="w-3 h-3" />
+              SOLVED
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={handlePrevChallenge}
+            disabled={challengeIndex === 0}
+            className="neo-btn bg-[#25283D] text-slate-300 disabled:opacity-30 px-2 py-0.5 text-[10px] flex items-center gap-0.5"
+            title="Previous Question"
+          >
+            <ChevronLeft className="w-3 h-3" />
+            <span className="hidden sm:inline">PREV</span>
+          </button>
+          <button
+            onClick={handleNextChallenge}
+            disabled={challengeIndex === CODING_CHALLENGES.length - 1}
+            className="neo-btn bg-[#25283D] text-slate-300 disabled:opacity-30 px-2 py-0.5 text-[10px] flex items-center gap-0.5"
+            title="Next Question"
+          >
+            <span className="hidden sm:inline">NEXT</span>
+            <ChevronRight className="w-3 h-3" />
+          </button>
+          <button
+            onClick={handleResetChallenge}
+            className="neo-btn bg-[#FF4365] text-white px-2 py-0.5 text-[10px] flex items-center gap-1"
+            title="Reset question starter code"
+          >
+            <RotateCcw className="w-3 h-3" />
+            <span className="hidden sm:inline">RESET</span>
+          </button>
+        </div>
+      </div>
+
+      {/* OS Congratulation Celebration Ribbon */}
+      {congratsBanner && (
+        <div className="bg-[#10B981] text-black border-b-2 border-black px-4 py-2 flex items-center justify-between font-mono text-xs font-black shadow-[0_2px_0_#000] animate-in fade-in slide-in-from-top duration-300">
+          <div className="flex items-center gap-2">
+            <Trophy className="w-4 h-4 animate-bounce" />
+            <span>{congratsBanner.text}</span>
+          </div>
+          {!congratsBanner.isFinal ? (
+            <span className="bg-black text-[#FACC15] px-2 py-0.5 border border-black text-[10px]">
+              ADVANCING TO NEXT QUESTION...
+            </span>
+          ) : (
+            <span className="bg-black text-[#FACC15] px-2 py-0.5 border border-black text-[10px]">
+              ALL QUESTIONS CLEARED! 🏆
+            </span>
+          )}
+        </div>
+      )}
+
       {/* Code Integrity / Fracture Banner (Shows when something breaks in UI) */}
-      {lastError && (
+      {lastError && !congratsBanner && (
         <div className="bg-[#2A0E14] border-b-2 border-rose-600 px-3 py-1 flex items-center justify-between font-mono text-[11px] text-rose-300 select-none shrink-0 anim-code-jolt">
           <div className="flex items-center gap-2">
             <span className="text-sm">💥</span>
