@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOS, OSMood } from '../app/osStateMachine';
 import { usePhysicsCollapse } from '../physics/PhysicsWorld';
+import { audioManager } from '../audio/AudioManager';
 import { TopBar } from './TopBar';
 import { Sidebar } from './Sidebar';
 import { MiniEditor } from './MiniEditor';
@@ -13,6 +14,32 @@ import { AlertOctagon, Flame } from 'lucide-react';
 export function Workspace({ onJudgeReset }) {
   const { state, actions } = useOS();
   const { mood, trust } = state;
+
+  // Coordinate procedural background music with OS mood stages (Calm, Suspicious, Boss)
+  useEffect(() => {
+    audioManager.setBgmStage(mood);
+  }, [mood]);
+
+  // Unlock BGM after first user interaction (comply with browser Autoplay Policy)
+  useEffect(() => {
+    const handleFirstGesture = () => {
+      audioManager.initContext();
+      audioManager.setBgmStage(mood);
+      window.removeEventListener('click', handleFirstGesture);
+      window.removeEventListener('keydown', handleFirstGesture);
+      window.removeEventListener('touchstart', handleFirstGesture);
+    };
+
+    window.addEventListener('click', handleFirstGesture);
+    window.addEventListener('keydown', handleFirstGesture);
+    window.addEventListener('touchstart', handleFirstGesture);
+
+    return () => {
+      window.removeEventListener('click', handleFirstGesture);
+      window.removeEventListener('keydown', handleFirstGesture);
+      window.removeEventListener('touchstart', handleFirstGesture);
+    };
+  }, [mood]);
 
   // Coordinate Matter.js rigid-body physics collapse & smooth restoration
   usePhysicsCollapse({

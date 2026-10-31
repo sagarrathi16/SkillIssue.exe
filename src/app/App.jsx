@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { OSProvider, useOS } from './osStateMachine';
 import { physicsManager } from '../physics/PhysicsWorld';
+import { audioManager } from '../audio/AudioManager';
 import { DebugDemoBar } from '../components/DebugDemoBar';
 import { Workspace } from '../components/Workspace';
 
@@ -9,6 +10,7 @@ function OSContainer() {
 
   const handleFullJudgeReset = () => {
     physicsManager.hardReset();
+    audioManager.setBgmStage('CALM');
     actions.resetDemo();
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('namma_os_reset'));

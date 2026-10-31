@@ -8,6 +8,10 @@ class AudioManager {
   constructor() {
     this.audioCtx = null;
     this.masterGain = null;
+    this.bgmGain = null;
+    this.currentBgmTrack = 'NONE';
+    this.bgmInterval = null;
+    this.bgmStep = 0;
     this.isMuted = false;
     this.volume = 0.8;
     this.isUnlocked = false;
@@ -38,6 +42,12 @@ class AudioManager {
           this.masterGain = this.audioCtx.createGain();
           this.masterGain.gain.value = this.isMuted ? 0 : this.volume;
           this.masterGain.connect(this.audioCtx.destination);
+
+          // Dedicated Background Music (BGM) Gain
+          this.bgmGain = this.audioCtx.createGain();
+          this.bgmGain.gain.value = this.isMuted ? 0 : 0.08;
+          this.bgmGain.connect(this.masterGain);
+
           this.isUnlocked = true;
         }
       } catch (err) {
@@ -74,6 +84,14 @@ class AudioManager {
       try {
         this.masterGain.gain.setValueAtTime(
           this.isMuted ? 0 : this.volume,
+          this.audioCtx.currentTime
+        );
+      } catch (err) {}
+    }
+    if (this.bgmGain && this.audioCtx) {
+      try {
+        this.bgmGain.gain.setValueAtTime(
+          this.isMuted ? 0 : 0.08,
           this.audioCtx.currentTime
         );
       } catch (err) {}
@@ -324,6 +342,135 @@ class AudioManager {
     } catch (err) {
       // Speech synthesis error handled gracefully
     }
+  }
+
+  // =========================================================================
+  // DYNAMIC PROCEDURAL BACKGROUND MUSIC (BGM) SYNTHESIZER
+  // 100% Offline Chiptune Engine: Calm, Suspicious, and Boss Battle
+  // =========================================================================
+
+  playBgmNote(freq, type = 'triangle', duration = 0.16, vol = 0.10) {
+    if (this.isMuted || !freq) return;
+    const ctx = this.initContext();
+    if (!ctx || !this.bgmGain) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+
+      gain.gain.setValueAtTime(vol, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+      osc.connect(gain);
+      gain.connect(this.bgmGain);
+
+      osc.start(now);
+      osc.stop(now + duration + 0.04);
+    } catch (e) {}
+  }
+
+  setBgmStage(stage) {
+    let target = 'CALM';
+    if (stage === 'BENGALURU_BOSS_FIGHT' || stage === 'MENTAL_BREAKDOWN' || stage === 'BOSS') {
+      target = 'BOSS';
+    } else if (stage === 'SLIGHTLY_ANNOYED' || stage === 'PERSONAL_BETRAYAL' || stage === 'SUSPICIOUS') {
+      target = 'SUSPICIOUS';
+    } else {
+      target = 'CALM';
+    }
+
+    if (this.currentBgmTrack === target && this.bgmInterval) return;
+    this.currentBgmTrack = target;
+    this.restartBgmLoop();
+  }
+
+  restartBgmLoop() {
+    if (typeof window === 'undefined') return;
+    if (this.bgmInterval) {
+      clearInterval(this.bgmInterval);
+      this.bgmInterval = null;
+    }
+
+    this.bgmStep = 0;
+
+    // Musical patterns across 16 steps
+    const CALM_MELODY = [
+      261.63, 0, 329.63, 0, 392.00, 0, 493.88, 0, // C4 - E4 - G4 - B4
+      440.00, 0, 392.00, 0, 329.63, 0, 293.66, 0  // A4 - G4 - E4 - D4
+    ];
+    const CALM_BASS = [
+      130.81, 0, 0, 0, 164.81, 0, 0, 0, // C3 - E3
+      174.61, 0, 0, 0, 196.00, 0, 0, 0  // F3 - G3
+    ];
+
+    const SUSP_BASS = [
+      146.83, 146.83, 138.59, 138.59, 146.83, 174.61, 207.65, 220.00, // D3, C#3, D3, F3, G#3, A3
+      146.83, 146.83, 155.56, 146.83, 130.81, 138.59, 146.83, 0
+    ];
+    const SUSP_TICK = [
+      1200, 0, 800, 0, 1200, 0, 800, 1200,
+      1200, 0, 800, 0, 1200, 800, 1400, 0
+    ];
+
+    const BOSS_BASS = [
+      110.00, 110.00, 130.81, 110.00, 146.83, 130.81, 98.00, 103.83, // A2, C3, D3, G2, G#2
+      110.00, 110.00, 130.81, 146.83, 164.81, 146.83, 130.81, 123.47
+    ];
+    const BOSS_LEAD = [
+      329.63, 392.00, 440.00, 523.25, 493.88, 392.00, 329.63, 293.66, // E4, G4, A4, C5, B4, G4...
+      329.63, 440.00, 587.33, 523.25, 659.25, 587.33, 523.25, 440.00
+    ];
+
+    // Tempo configuration per stage
+    let stepMs = 180; // CALM: ~83 BPM
+    if (this.currentBgmTrack === 'SUSPICIOUS') {
+      stepMs = 135; // SUSPICIOUS: ~111 BPM
+    } else if (this.currentBgmTrack === 'BOSS') {
+      stepMs = 100; // BOSS: ~150 BPM
+    }
+
+    this.bgmInterval = setInterval(() => {
+      if (this.isMuted) return;
+
+      const step = this.bgmStep;
+
+      if (this.currentBgmTrack === 'CALM') {
+        if (CALM_MELODY[step]) {
+          this.playBgmNote(CALM_MELODY[step], 'triangle', 0.22, 0.07);
+        }
+        if (CALM_BASS[step]) {
+          this.playBgmNote(CALM_BASS[step], 'sine', 0.35, 0.08);
+        }
+      } else if (this.currentBgmTrack === 'SUSPICIOUS') {
+        if (SUSP_BASS[step]) {
+          this.playBgmNote(SUSP_BASS[step], 'sawtooth', 0.12, 0.06);
+        }
+        if (SUSP_TICK[step]) {
+          this.playBgmNote(SUSP_TICK[step], 'square', 0.03, 0.03);
+        }
+      } else if (this.currentBgmTrack === 'BOSS') {
+        if (BOSS_BASS[step]) {
+          this.playBgmNote(BOSS_BASS[step], 'sawtooth', 0.09, 0.08);
+        }
+        if (BOSS_LEAD[step]) {
+          this.playBgmNote(BOSS_LEAD[step], 'square', 0.11, 0.07);
+        }
+      }
+
+      this.bgmStep = (this.bgmStep + 1) % 16;
+    }, stepMs);
+  }
+
+  stopBgm() {
+    if (this.bgmInterval) {
+      clearInterval(this.bgmInterval);
+      this.bgmInterval = null;
+    }
+    this.currentBgmTrack = 'NONE';
   }
 }
 
