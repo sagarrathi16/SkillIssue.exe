@@ -189,58 +189,33 @@
    ========================================================================= */
 
 @keyframes codeJolt {
-  0% { transform: translate(0, 0) scale(1); filter: none; }
-  15% { transform: translate(-5px, 2px) skewX(-2deg); filter: contrast(130%) hue-rotate(90deg); }
-  35% { transform: translate(4px, -3px) skewX(2.5deg); filter: contrast(160%) hue-rotate(180deg); }
-  55% { transform: translate(-3px, 1px) skewX(-1.5deg); filter: contrast(120%) hue-rotate(270deg); }
-  75% { transform: translate(2px, -1px) skewX(1deg); filter: contrast(110%); }
-  90% { transform: translate(-1px, 0.5px) skewX(-0.5deg); filter: none; }
-  100% { transform: translate(0, 0) scale(1); filter: none; }
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, 0.5px); }
+  100% { transform: translate(0, 0); }
 }
 
 .anim-code-jolt {
-  animation: codeJolt 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+  animation: codeJolt 0.25s ease-in-out;
 }
 
-.code-glitch-subtle {
-  text-shadow: 1px 0 #FF4365, -1px 0 #00FFFF;
-}
-
+/* Text glitch effects neutralized for 100% editor readability */
+.code-glitch-subtle,
 .code-glitch-heavy {
-  text-shadow: 2px 0.5px #FF4365, -2px -0.5px #00F0FF;
-  letter-spacing: 0.02em;
+  text-shadow: none !important;
+  letter-spacing: normal !important;
 }
 
-@keyframes glitchScanline {
-  0% { transform: translateY(-100%); opacity: 0; }
-  20% { opacity: 0.25; }
-  80% { opacity: 0.25; }
-  100% { transform: translateY(800%); opacity: 0; }
-}
-
-.anim-scanline-glitch {
-  animation: glitchScanline 2.5s ease-in-out infinite;
-}
-
-.code-tilted-annoyed {
-  transform: rotate(-0.5deg);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.code-tilted-betrayal {
-  transform: rotate(-1.2deg) skewX(-0.5deg);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
+.code-tilted-annoyed,
+.code-tilted-betrayal,
 .code-tilted-breakdown {
-  transform: rotate(-1.8deg) skewX(-1deg);
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  animation: slightTremor 1.8s ease-in-out infinite;
+  transform: none !important;
 }
 
 @keyframes errorPulseLine {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.7; }
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.5; }
 }
 
 .anim-error-line {

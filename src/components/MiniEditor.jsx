@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useOS, OSMood } from '../app/osStateMachine';
 import { validateCode, CODING_CHALLENGES, BUG_PRESETS, DEFAULT_CODE_SNIPPET } from '../logic/mistakeDetector';
 import { audioManager } from '../audio/AudioManager';
@@ -15,38 +15,6 @@ import {
   Trophy
 } from 'lucide-react';
 
-function highlightTokens(codeLine) {
-  const tokens = [];
-  const regex = /(\b(?:const|let|var|function|return|if|else|while|for|class|import|from|export|true|false|null|undefined)\b)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|(\b\d+(?:\.\d+)?\b)|([{}()\[\];,])|(\S+)/g;
-  let match;
-  let lastIndex = 0;
-
-  while ((match = regex.exec(codeLine)) !== null) {
-    if (match.index > lastIndex) {
-      tokens.push(<span key={lastIndex}>{codeLine.substring(lastIndex, match.index)}</span>);
-    }
-    const [full, keyword, str, num, punctuation] = match;
-    if (keyword) {
-      tokens.push(<span key={match.index} className="text-[#38BDF8] font-bold">{full}</span>);
-    } else if (str) {
-      tokens.push(<span key={match.index} className="text-[#34D399]">{full}</span>);
-    } else if (num) {
-      tokens.push(<span key={match.index} className="text-[#FACC15]">{full}</span>);
-    } else if (punctuation) {
-      tokens.push(<span key={match.index} className="text-slate-400">{full}</span>);
-    } else {
-      tokens.push(<span key={match.index} className="text-[#94A3B8]">{full}</span>);
-    }
-    lastIndex = regex.lastIndex;
-  }
-
-  if (lastIndex < codeLine.length) {
-    tokens.push(<span key={lastIndex}>{codeLine.substring(lastIndex)}</span>);
-  }
-
-  return tokens.length > 0 ? tokens : codeLine;
-}
-
 export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismissedCode }) {
   const { state, actions } = useOS();
   const { mood } = state;
@@ -56,7 +24,6 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
   const [congratsBanner, setCongratsBanner] = useState(null);
 
   const [code, setCode] = useState(CODING_CHALLENGES[0].starterCode);
-  const [isJolting, setIsJolting] = useState(false);
   const [errorLine, setErrorLine] = useState(null);
   const [lastError, setLastError] = useState(null);
 
@@ -65,30 +32,6 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
     text: '👾 Arcade Compiler ready. Read the prompt in the code comment, fix the syntax, and click "▶ RUN CODE"!',
     timestamp: null,
   });
-
-  const backdropRef = useRef(null);
-  const textareaRef = useRef(null);
-
-  const handleEditorScroll = (e) => {
-    if (backdropRef.current) {
-      backdropRef.current.scrollTop = e.target.scrollTop;
-      backdropRef.current.scrollLeft = e.target.scrollLeft;
-    }
-  };
-
-  const triggerJolt = () => {
-    setIsJolting(true);
-    setTimeout(() => setIsJolting(false), 450);
-  };
-
-  // Trigger code jolt whenever trust drops or an abuse/mistake event occurs
-  const prevTrustRef = React.useRef(state.trust);
-  React.useEffect(() => {
-    if (state.trust < prevTrustRef.current) {
-      triggerJolt();
-    }
-    prevTrustRef.current = state.trust;
-  }, [state.trust, state.mistakeCount, state.rapidClickEvents]);
 
   // Listen for full judge demo reset event
   React.useEffect(() => {
@@ -337,30 +280,20 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
   const isBetrayal = mood === OSMood.PERSONAL_BETRAYAL;
   const isBreakdown = mood === OSMood.MENTAL_BREAKDOWN || mood === OSMood.BENGALURU_BOSS_FIGHT;
 
-  const tiltClass = isBreakdown
-    ? 'code-tilted-breakdown border-[#FF4365] border-dashed shadow-[6px_6px_0px_#FF4365]'
+  const borderClass = isBreakdown
+    ? 'border-[#FF4365] shadow-[4px_4px_0px_#FF4365]'
     : isBetrayal
-    ? 'code-tilted-betrayal border-rose-500 border-dashed shadow-[5px_5px_0px_#F43F5E]'
+    ? 'border-rose-500 shadow-[4px_4px_0px_#F43F5E]'
     : isAnnoyed
-    ? 'code-tilted-annoyed border-amber-400 shadow-[4px_4px_0px_#FACC15]'
+    ? 'border-amber-400 shadow-[4px_4px_0px_#FACC15]'
     : 'border-black shadow-[4px_4px_0px_#000]';
-
-  const joltClass = isJolting ? 'anim-code-jolt' : '';
-
-  const codeGlitchClass = isBreakdown
-    ? 'code-glitch-heavy text-rose-100'
-    : isBetrayal
-    ? 'code-glitch-subtle text-amber-100'
-    : isAnnoyed
-    ? 'code-glitch-subtle text-amber-100'
-    : 'text-amber-100';
 
   const activeChallenge = CODING_CHALLENGES[challengeIndex];
 
   return (
     <div
       // SACRED SAFE ZONE: NO data-physics-id here! This editor never falls.
-      className={`flex-1 flex flex-col bg-[#13141F] border-2 overflow-hidden transition-all duration-300 relative ${tiltClass} ${joltClass}`}
+      className={`flex-1 flex flex-col bg-[#13141F] border-2 overflow-hidden transition-all duration-300 relative ${borderClass}`}
     >
       {/* Editor Top Bar & Controls */}
       <div className="bg-[#1C1E2D] border-b-2 border-black px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs select-none">
@@ -565,83 +498,15 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
           </div>
         )}
 
-        {/* Subtle digital glitch scanline tears across the code */}
-        {(isAnnoyed || isBetrayal || isBreakdown || errorLine !== null) && (
-          <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-25 select-none z-0">
-            <div className="w-full h-1 bg-gradient-to-r from-transparent via-[#FF4365] to-transparent anim-scanline-glitch" />
-            {(isBetrayal || isBreakdown) && (
-              <div 
-                className="w-full h-0.5 bg-cyan-400/50 anim-scanline-glitch" 
-                style={{ animationDelay: '1.2s' }} 
-              />
-            )}
-          </div>
-        )}
-
-        {/* Code Container with Syntax Highlight Backdrop & Lighter Comments */}
-        <div className="flex-1 relative overflow-hidden">
-          {/* Backdrop with Lighter Comment Highlighting */}
-          <div
-            ref={backdropRef}
-            aria-hidden="true"
-            className="absolute inset-0 p-3 leading-6 font-mono text-xs sm:text-sm overflow-hidden pointer-events-none whitespace-pre select-none z-0"
-          >
-            {lines.map((line, idx) => {
-              const trimmed = line.trim();
-              const isErrorLine = errorLine === idx;
-              if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) {
-                return (
-                  <div 
-                    key={idx} 
-                    className={`leading-6 text-[#E2E8F0] ${
-                      isErrorLine ? 'bg-rose-500/20 text-rose-100' : ''
-                    }`}
-                  >
-                    <span className="text-[#94A3B8] font-mono mr-1">//</span>
-                    <span className="text-[#E2E8F0] font-mono">{line.replace(/^(\s*)\/\/\s?/, '$1')}</span>
-                  </div>
-                );
-              }
-              const inlineCommentIdx = line.indexOf('//');
-              if (inlineCommentIdx !== -1) {
-                const codePart = line.substring(0, inlineCommentIdx);
-                const commentPart = line.substring(inlineCommentIdx);
-                return (
-                  <div 
-                    key={idx} 
-                    className={`leading-6 ${isErrorLine ? 'bg-rose-500/20' : ''}`}
-                  >
-                    <span className="text-[#94A3B8] font-mono">{highlightTokens(codePart)}</span>
-                    <span className="text-[#E2E8F0] font-mono">
-                      <span className="text-[#94A3B8] font-mono">//</span>
-                      <span className="text-[#E2E8F0] font-mono">{commentPart.replace(/^\/\/\s?/, ' ')}</span>
-                    </span>
-                  </div>
-                );
-              }
-              return (
-                <div 
-                  key={idx} 
-                  className={`leading-6 text-[#94A3B8] font-mono ${isErrorLine ? 'bg-rose-500/20' : ''}`}
-                >
-                  {highlightTokens(line)}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Interactive Text Area on Top */}
-          <textarea
-            ref={textareaRef}
-            value={code}
-            onChange={(e) => updateCode(e.target.value)}
-            onScroll={handleEditorScroll}
-            onKeyDown={handleKeyDown}
-            spellCheck="false"
-            className={`absolute inset-0 p-3 leading-6 resize-none focus:outline-none focus:ring-0 font-mono text-xs sm:text-sm overflow-y-auto selection:bg-[#FACC15] selection:text-black z-10 bg-transparent text-transparent caret-[#FACC15] ${codeGlitchClass}`}
-            placeholder="Write JavaScript code here..."
-          />
-        </div>
+        {/* Clean, Single-Layer Native Text Area */}
+        <textarea
+          value={code}
+          onChange={(e) => updateCode(e.target.value)}
+          onKeyDown={handleKeyDown}
+          spellCheck="false"
+          className="flex-1 bg-transparent p-3 leading-6 resize-none focus:outline-none focus:ring-0 font-mono text-xs sm:text-sm overflow-y-auto selection:bg-[#FACC15] selection:text-black relative z-10 text-[#F1F5F9] caret-[#FACC15]"
+          placeholder="Write JavaScript code here..."
+        />
       </div>
 
       {/* Terminal / Output Console at the Bottom */}
