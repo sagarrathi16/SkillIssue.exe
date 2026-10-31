@@ -1,17 +1,17 @@
-# 🛺 Namma Fragile OS (SynapseX / Sorry.exe)
+# 💀 SkillIssue.exe (CodeDay Edition)
 
-> *"An operating system that remembers every mistake. Unfortunately, it takes them personally."*
+> *"The code editor that remembers every mistake. Unfortunately, it's a massive skill issue."*
 
 [![React 18](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Matter.js](https://img.shields.io/badge/Physics-Matter.js-crimson)](https://brm.io/matter-js/)
 [![Offline First](https://img.shields.io/badge/Zero_API_Keys-100%25_Deterministic-10B981)](#-zero-dependency-architecture)
-[![CodeDay Bengaluru](https://img.shields.io/badge/CodeDay-Bengaluru_2026-F59E0B)](https://codeday.org/)
+[![CodeDay Hackathon](https://img.shields.io/badge/CodeDay-Hackathon_2026-F59E0B)](https://codeday.org/)
 
-**Namma Fragile OS** is an interactive, browser-based desktop workspace with an emotionally volatile operating system and a sharp Bengaluru personality. It begins as a credible, dark-mode developer environment (inspired by Linear and VS Code). Make mistakes, ignore compiler warnings, or spam toolbar buttons, and the OS degrades its trust in you. At high escalation, **the surrounding UI chrome literally detaches and collapses into a 2D rigid-body physics pile** under real gravity—while keeping your code editor and typed buffer completely intact!
+**SkillIssue.exe** is a gamified, meme-packed code editor with an emotionally volatile temperament built for CodeDay. It starts as a credible developer environment. Make mistakes, ignore compiler warnings, or spam toolbar buttons, and the editor degrades its trust in you. At high escalation, **the surrounding UI chrome literally detaches and collapses into a 2D rigid-body physics pile** under real gravity—while keeping your central code editor and typed buffer completely intact!
 
-To get your workspace back, you must apologize with genuine sincerity (via spoken voice or text) or beat a stubborn Bengaluru auto-rickshaw driver in an authentic fare-bargaining boss fight in the rain.
+To restore your workspace, you must beat the **Bug Smasher Arcade Game** or survive the **Tech Lead Dare Roulette**.
 
 ---
 

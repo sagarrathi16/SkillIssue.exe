@@ -70,6 +70,12 @@ export function TopBar({ onJudgeReset }) {
           <div className="w-2.5 h-2.5 bg-emerald-400 border border-black" />
         </div>
 
+        {/* App Title Badge */}
+        <div className="flex items-center gap-1.5 bg-[#FACC15] text-black font-black px-2 py-0.5 border border-black shadow-[1px_1px_0px_#000] font-mono text-[11px] tracking-wide">
+          <span>💀</span>
+          <span>SkillIssue.exe</span>
+        </div>
+
         {/* Project Breadcrumb / Stage Info */}
         <div className="hidden sm:flex items-center gap-1.5 bg-[#1F2133] px-2.5 py-1 border-2 border-black shadow-[2px_2px_0px_#000] font-mono text-[11px]">
           <Layers className="w-3.5 h-3.5 text-amber-400" />

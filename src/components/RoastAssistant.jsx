@@ -188,7 +188,7 @@ export function RoastAssistant() {
                 <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                   <span className="text-xl">{getAvatarEmoji(dialogue.avatarMood)}</span>
                   <span className="bg-black text-[#FACC15] font-black text-[11px] px-2 py-0.5 border border-black uppercase font-mono tracking-wider">
-                    OS TECH LEAD
+                    TECH LEAD JUDGE
                   </span>
                   <span className="bg-[#C084FC] text-black font-black text-[10px] px-2 py-0.5 border border-black font-mono">
                     {dialogue.tag}

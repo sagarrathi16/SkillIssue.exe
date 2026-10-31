@@ -41,7 +41,7 @@ export function SubtitleBanner() {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-1">
             <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-              <span>Namma Assistant</span>
+              <span>SkillIssue Bot</span>
               <span className="text-[10px] text-slate-500 lowercase">({dialogue.tag})</span>
             </span>
 

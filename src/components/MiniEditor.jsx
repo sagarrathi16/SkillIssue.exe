@@ -3,27 +3,26 @@ import { useOS, OSMood } from '../app/osStateMachine';
 import { validateCode, DEFAULT_CODE_SNIPPET } from '../logic/mistakeDetector';
 import { Play, CheckCircle2, AlertTriangle, Terminal, Code2, Sparkles } from 'lucide-react';
 
-const SAMPLE_CLEAN_CODE = `// Namma Fragile OS — Bengaluru Traffic Routing (Fixed)
-function calculateSilkBoardDelay(distanceKm) {
-  const signalWait = 25; // minutes
-  const rainMultiplier = 2.5;
+const SAMPLE_CLEAN_CODE = `// SkillIssue.exe — CodeDay Hackathon Build (Clean)
+function calculateHackathonEnergy(caffeineMg, sleepHours) {
+  const codeDayMultiplier = 2.5;
 
-  if (distanceKm > 3) {
-    const totalDelay = (distanceKm * 12) + signalWait * rainMultiplier;
-    return totalDelay;
+  if (sleepHours < 3) {
+    const energyLevel = (caffeineMg * 1.5) + (codeDayMultiplier * 10);
+    return energyLevel;
   }
-  return distanceKm * 8;
+  return caffeineMg * 0.8;
 }
 
-console.log("Expected Silk Board Delay:", calculateSilkBoardDelay(7), "mins");`;
+console.log("Calculated Hackathon Energy:", calculateHackathonEnergy(250, 2), "XP");`;
 
-const SAMPLE_VAR_CODE = `// Namma Fragile OS — Deprecated Syntax Test
-var driverName = "Manjunath";
-var fareAmount = 450;
+const SAMPLE_VAR_CODE = `// SkillIssue.exe — Deprecated Syntax Test
+var hackerName = "CaffeineCoder";
+var bugCount = 42;
 
-function bookRide() {
-  var trafficStatus = "jammed";
-  return driverName + " says fare is " + fareAmount;
+function shipHack() {
+  var panicStatus = "critical";
+  return hackerName + " has " + bugCount + " bugs to fix before deadline";
 }`;
 
 export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismissedCode }) {

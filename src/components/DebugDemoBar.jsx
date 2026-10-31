@@ -77,10 +77,10 @@ export function DebugDemoBar({ onJudgeReset }) {
       {/* Brand & Telemetry Badge */}
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2 bg-[#FACC15] text-black font-black px-2.5 py-1 border-2 border-black shadow-[2px_2px_0px_#000] tracking-wider uppercase">
-          <span className="text-sm">🛺</span>
-          <span>NAMMA OS</span>
+          <span className="text-sm">💀</span>
+          <span>SKILLISSUE.EXE</span>
           <span className="bg-black text-[#FACC15] text-[10px] px-1 py-0.2 rounded font-mono">
-            ARCADE ED.
+            CODEDAY ED.
           </span>
         </div>
 
