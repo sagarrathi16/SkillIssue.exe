@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useOS, OSMood } from '../app/osStateMachine';
 import { validateCode, CODING_CHALLENGES, BUG_PRESETS, DEFAULT_CODE_SNIPPET } from '../logic/mistakeDetector';
 import { audioManager } from '../audio/AudioManager';
@@ -33,6 +33,16 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
     text: '👾 Arcade Compiler ready. Read the prompt in the code comment, fix the syntax, and click "▶ RUN CODE"!',
     timestamp: null,
   });
+
+  const backdropRef = useRef(null);
+  const textareaRef = useRef(null);
+
+  const handleEditorScroll = (e) => {
+    if (backdropRef.current) {
+      backdropRef.current.scrollTop = e.target.scrollTop;
+      backdropRef.current.scrollLeft = e.target.scrollLeft;
+    }
+  };
 
   const triggerJolt = () => {
     setIsJolting(true);
@@ -441,6 +451,16 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
         </div>
       </div>
 
+      {/* Dedicated Question Task Prompt Banner (Lighter text color) */}
+      <div className="bg-[#181A2C] border-b-2 border-black px-4 py-2 flex items-start gap-2.5 text-xs select-none">
+        <span className="bg-[#FACC15] text-black font-black px-1.5 py-0.5 border border-black font-mono text-[10px] shrink-0 uppercase tracking-wide">
+          // QUESTION
+        </span>
+        <p className="text-[#F8FAFC] font-mono text-xs sm:text-[13px] font-semibold leading-relaxed">
+          {activeChallenge.taskPrompt}
+        </p>
+      </div>
+
       {/* OS Congratulation Celebration Ribbon */}
       {congratsBanner && (
         <div className="bg-[#10B981] text-black border-b-2 border-black px-4 py-2 flex items-center justify-between font-mono text-xs font-black shadow-[0_2px_0_#000] animate-in fade-in slide-in-from-top duration-300">
@@ -536,15 +556,70 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
           </div>
         )}
 
-        {/* Text Area */}
-        <textarea
-          value={code}
-          onChange={(e) => updateCode(e.target.value)}
-          onKeyDown={handleKeyDown}
-          spellCheck="false"
-          className={`flex-1 bg-transparent p-3 leading-6 resize-none focus:outline-none focus:ring-0 font-mono text-xs sm:text-sm overflow-y-auto selection:bg-[#FACC15] selection:text-black relative z-10 transition-colors ${codeGlitchClass}`}
-          placeholder="Write JavaScript code here..."
-        />
+        {/* Code Container with Syntax Highlight Backdrop & Lighter Comments */}
+        <div className="flex-1 relative overflow-hidden">
+          {/* Backdrop with Lighter Comment Highlighting */}
+          <div
+            ref={backdropRef}
+            aria-hidden="true"
+            className="absolute inset-0 p-3 leading-6 font-mono text-xs sm:text-sm overflow-hidden pointer-events-none whitespace-pre select-none z-0"
+          >
+            {lines.map((line, idx) => {
+              const trimmed = line.trim();
+              const isErrorLine = errorLine === idx;
+              if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) {
+                return (
+                  <div 
+                    key={idx} 
+                    className={`leading-6 text-[#F8FAFC] font-semibold tracking-wide ${
+                      isErrorLine ? 'bg-rose-500/20 text-rose-100' : ''
+                    }`}
+                  >
+                    <span className="text-[#94A3B8] font-mono mr-1 opacity-80">//</span>
+                    <span className="text-[#F8FAFC] font-mono">{line.replace(/^(\s*)\/\/\s?/, '$1')}</span>
+                  </div>
+                );
+              }
+              const inlineCommentIdx = line.indexOf('//');
+              if (inlineCommentIdx !== -1) {
+                const codePart = line.substring(0, inlineCommentIdx);
+                const commentPart = line.substring(inlineCommentIdx);
+                return (
+                  <div 
+                    key={idx} 
+                    className={`leading-6 ${isErrorLine ? 'bg-rose-500/20' : ''}`}
+                  >
+                    <span className="text-amber-100 font-mono">{codePart}</span>
+                    <span className="text-[#F8FAFC] font-semibold font-mono">
+                      <span className="text-[#94A3B8] opacity-80 font-mono">//</span>
+                      <span className="text-[#F8FAFC] font-mono">{commentPart.replace(/^\/\/\s?/, ' ')}</span>
+                    </span>
+                  </div>
+                );
+              }
+              return (
+                <div 
+                  key={idx} 
+                  className={`leading-6 text-amber-100 font-mono ${isErrorLine ? 'bg-rose-500/20' : ''}`}
+                >
+                  {line || ' '}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Interactive Text Area on Top */}
+          <textarea
+            ref={textareaRef}
+            value={code}
+            onChange={(e) => updateCode(e.target.value)}
+            onScroll={handleEditorScroll}
+            onKeyDown={handleKeyDown}
+            spellCheck="false"
+            className={`absolute inset-0 p-3 leading-6 resize-none focus:outline-none focus:ring-0 font-mono text-xs sm:text-sm overflow-y-auto selection:bg-[#FACC15] selection:text-black z-10 bg-transparent text-transparent caret-[#FACC15] ${codeGlitchClass}`}
+            placeholder="Write JavaScript code here..."
+          />
+        </div>
       </div>
 
       {/* Terminal / Output Console at the Bottom */}

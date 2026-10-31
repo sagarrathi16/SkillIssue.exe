@@ -10,6 +10,7 @@ export const CODING_CHALLENGES = [
     difficulty: 'Novice Hacker',
     tag: 'BRACKET MATCHING',
     branch: 'feature/coffee-engine',
+    taskPrompt: 'Fix the syntax error in calculateCoffeeFuel()! There is an unclosed bracket hanging in the if-block. Close all brackets properly and click "▶ RUN CODE"!',
     starterCode: `// =========================================================================
 // ☕ CHALLENGE 1/7 [BRANCH: feature/coffee-engine]
 // TASK: Fix the syntax error in calculateCoffeeFuel()!
@@ -51,6 +52,7 @@ console.log(calculateCoffeeFuel(5, 14));`,
     difficulty: 'Modern Standards',
     tag: 'LEGACY REFACTOR',
     branch: 'refactor/ban-var',
+    taskPrompt: 'In 2026, the OS refuses to compile code using deprecated "var"! Refactor all "var" declarations to "const" or "let", ensure statements have semicolons, and click "▶ RUN CODE"!',
     starterCode: `// =========================================================================
 // 🚫 CHALLENGE 2/7 [BRANCH: refactor/ban-var]
 // TASK: In 2026, the OS refuses to compile code using deprecated 'var'!
@@ -92,6 +94,7 @@ console.log(hackerName, "survival check:", checkSurvival());`,
     difficulty: 'Bracket Alignment',
     tag: 'MISMATCH FIX',
     branch: 'fix/prize-pool',
+    taskPrompt: 'Your hackathon team won 1st place! Fix the mismatched bracket in splitPrizePool() so everyone can get paid!',
     starterCode: `// =========================================================================
 // 💰 CHALLENGE 3/7 [BRANCH: fix/prize-pool]
 // TASK: Your hackathon team won 1st place! Fix the mismatched bracket
@@ -132,6 +135,7 @@ console.log("Payout per hacker: $" + splitPrizePool(6000, 4));`,
     difficulty: 'CodeDay Final Boss',
     tag: 'DUAL FIX',
     branch: 'release/v1.0-midnight-ship',
+    taskPrompt: 'Final CodeDay deployment! Fix the missing semicolon AND the unclosed condition bracket in deployService() to ship cleanly!',
     starterCode: `// =========================================================================
 // 🚀 CHALLENGE 4/7 [BRANCH: release/v1.0-midnight-ship]
 // TASK: Final CodeDay deployment! Fix the missing semicolon AND the unclosed
@@ -172,6 +176,7 @@ console.log(deployService("SkillIssueCore", "c0deday"));`,
     difficulty: 'Algorithmic Safeguard',
     tag: 'LOOP DEFECT',
     branch: 'hotfix/infinite-loop',
+    taskPrompt: 'Fix the infinite while-loop in drainServerQueue()! The loop checks (remainingJobs > 0), but remainingJobs is never decremented. Add "remainingJobs--;" inside the loop!',
     starterCode: `// =========================================================================
 // ♾️ CHALLENGE 5/7 [BRANCH: hotfix/infinite-loop]
 // TASK: Fix the infinite while-loop in drainServerQueue()!
@@ -217,6 +222,7 @@ console.log(drainServerQueue(5));`,
     difficulty: 'Syntax & Strings',
     tag: 'SEED ROUND',
     branch: 'feat/ai-pitch-deck',
+    taskPrompt: 'Your Koramangala founder is pitching VCs! Fix the broken string syntax in generateStartupPitch() to close the $5M seed round!',
     starterCode: `// =========================================================================
 // 🦄 CHALLENGE 6/7 [BRANCH: feat/ai-pitch-deck]
 // TASK: Your Koramangala founder is pitching VCs! Fix the broken string
@@ -249,6 +255,7 @@ console.log(generateStartupPitch(10, "Autonomous Agent OS"));`,
     difficulty: 'Git Mastery',
     tag: 'MERGE CONFLICT',
     branch: 'chaos/merge-conflict',
+    taskPrompt: 'Resolve the Git merge conflict markers! Delete "<<<<<<< HEAD", "=======", and ">>>>>>>", pick the winning fare logic, and click "▶ RUN CODE"!',
     starterCode: `// =========================================================================
 // 🔀 CHALLENGE 7/7 [BRANCH: chaos/merge-conflict]
 // TASK: Resolve the Git merge conflict markers below!
