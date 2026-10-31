@@ -45,7 +45,7 @@ class AudioManager {
 
           // Dedicated Background Music (BGM) Gain
           this.bgmGain = this.audioCtx.createGain();
-          this.bgmGain.gain.value = this.isMuted ? 0 : 0.08;
+          this.bgmGain.gain.value = this.isMuted ? 0 : 0.40;
           this.bgmGain.connect(this.masterGain);
 
           this.isUnlocked = true;
@@ -64,6 +64,22 @@ class AudioManager {
     return this.audioCtx;
   }
 
+  /**
+   * Explicitly unlocks audio and starts playback upon first user interaction
+   */
+  async unlockAudio() {
+    const ctx = this.initContext();
+    if (ctx && ctx.state === 'suspended') {
+      try {
+        await ctx.resume();
+      } catch (e) {}
+    }
+    this.isUnlocked = true;
+    if (!this.isMuted) {
+      this.restartBgmLoop();
+    }
+  }
+
   setVolume(newVol) {
     this.volume = Math.max(0, Math.min(1, newVol));
     if (this.masterGain && !this.isMuted) {
@@ -80,6 +96,12 @@ class AudioManager {
         localStorage.setItem('namma_os_muted', String(this.isMuted));
       } catch (err) {}
     }
+    const ctx = this.initContext();
+    if (ctx && ctx.state === 'suspended') {
+      try {
+        ctx.resume();
+      } catch (err) {}
+    }
     if (this.masterGain && this.audioCtx) {
       try {
         this.masterGain.gain.setValueAtTime(
@@ -91,10 +113,13 @@ class AudioManager {
     if (this.bgmGain && this.audioCtx) {
       try {
         this.bgmGain.gain.setValueAtTime(
-          this.isMuted ? 0 : 0.08,
+          this.isMuted ? 0 : 0.40,
           this.audioCtx.currentTime
         );
       } catch (err) {}
+    }
+    if (!this.isMuted) {
+      this.restartBgmLoop();
     }
     // Cancel active speech synthesis if muted
     if (this.isMuted && typeof window !== 'undefined' && window.speechSynthesis) {
@@ -349,7 +374,7 @@ class AudioManager {
   // 100% Offline Chiptune Engine: Calm, Suspicious, and Boss Battle
   // =========================================================================
 
-  playBgmNote(freq, type = 'triangle', duration = 0.16, vol = 0.10) {
+  playBgmNote(freq, type = 'triangle', duration = 0.20, vol = 0.28) {
     if (this.isMuted || !freq) return;
     const ctx = this.initContext();
     if (!ctx || !this.bgmGain) return;
@@ -369,7 +394,7 @@ class AudioManager {
       gain.connect(this.bgmGain);
 
       osc.start(now);
-      osc.stop(now + duration + 0.04);
+      osc.stop(now + duration + 0.05);
     } catch (e) {}
   }
 
@@ -393,6 +418,10 @@ class AudioManager {
     if (this.bgmInterval) {
       clearInterval(this.bgmInterval);
       this.bgmInterval = null;
+    }
+
+    if (this.currentBgmTrack === 'NONE') {
+      this.currentBgmTrack = 'CALM';
     }
 
     this.bgmStep = 0;
@@ -440,24 +469,24 @@ class AudioManager {
 
       if (this.currentBgmTrack === 'CALM') {
         if (CALM_MELODY[step]) {
-          this.playBgmNote(CALM_MELODY[step], 'triangle', 0.22, 0.07);
+          this.playBgmNote(CALM_MELODY[step], 'triangle', 0.25, 0.22);
         }
         if (CALM_BASS[step]) {
-          this.playBgmNote(CALM_BASS[step], 'sine', 0.35, 0.08);
+          this.playBgmNote(CALM_BASS[step], 'sine', 0.35, 0.25);
         }
       } else if (this.currentBgmTrack === 'SUSPICIOUS') {
         if (SUSP_BASS[step]) {
-          this.playBgmNote(SUSP_BASS[step], 'sawtooth', 0.12, 0.06);
+          this.playBgmNote(SUSP_BASS[step], 'sawtooth', 0.16, 0.22);
         }
         if (SUSP_TICK[step]) {
-          this.playBgmNote(SUSP_TICK[step], 'square', 0.03, 0.03);
+          this.playBgmNote(SUSP_TICK[step], 'square', 0.05, 0.08);
         }
       } else if (this.currentBgmTrack === 'BOSS') {
         if (BOSS_BASS[step]) {
-          this.playBgmNote(BOSS_BASS[step], 'sawtooth', 0.09, 0.08);
+          this.playBgmNote(BOSS_BASS[step], 'sawtooth', 0.12, 0.25);
         }
         if (BOSS_LEAD[step]) {
-          this.playBgmNote(BOSS_LEAD[step], 'square', 0.11, 0.07);
+          this.playBgmNote(BOSS_LEAD[step], 'square', 0.14, 0.22);
         }
       }
 

@@ -23,7 +23,7 @@ export function Workspace({ onJudgeReset }) {
   // Unlock BGM after first user interaction (comply with browser Autoplay Policy)
   useEffect(() => {
     const handleFirstGesture = () => {
-      audioManager.initContext();
+      audioManager.unlockAudio();
       audioManager.setBgmStage(mood);
       window.removeEventListener('click', handleFirstGesture);
       window.removeEventListener('keydown', handleFirstGesture);

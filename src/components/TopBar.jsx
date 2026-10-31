@@ -1,6 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useOS, OSMood } from '../app/osStateMachine';
 import { createClickTracker } from '../logic/mistakeDetector';
+import { audioManager } from '../audio/AudioManager';
 import { 
   GitBranch, 
   RotateCcw, 
@@ -8,12 +9,15 @@ import {
   Wand2,
   MapPin,
   Flame,
-  Radio
+  Radio,
+  Music,
+  VolumeX
 } from 'lucide-react';
 
 export function TopBar({ onJudgeReset }) {
   const { state, actions } = useOS();
   const { mood, trust } = state;
+  const [isMuted, setIsMuted] = useState(audioManager.isMuted);
 
   const handleReset = () => {
     if (onJudgeReset) {
@@ -21,6 +25,12 @@ export function TopBar({ onJudgeReset }) {
     } else {
       actions.resetDemo();
     }
+  };
+
+  const handleToggleAudio = () => {
+    audioManager.unlockAudio();
+    const muted = audioManager.toggleMute();
+    setIsMuted(muted);
   };
 
   // Rapid click tracker for toolbar buttons
@@ -118,6 +128,27 @@ export function TopBar({ onJudgeReset }) {
             <span className="hidden sm:inline">main</span>
           </button>
         </div>
+
+        {/* Audio / BGM Toggle Button */}
+        <button
+          onClick={handleToggleAudio}
+          className={`neo-btn px-2.5 py-1 font-mono text-[11px] flex items-center gap-1.5 ${
+            isMuted ? 'bg-[#FFA8A8] text-black' : 'bg-[#FACC15] text-black font-black'
+          }`}
+          title="Toggle Background Music & Sound"
+        >
+          {isMuted ? (
+            <>
+              <VolumeX className="w-3.5 h-3.5" />
+              <span>MUSIC: OFF</span>
+            </>
+          ) : (
+            <>
+              <Music className="w-3.5 h-3.5 animate-bounce" />
+              <span>MUSIC: ON</span>
+            </>
+          )}
+        </button>
 
         {/* 4. SACRED SAFE ZONE: Reset Demo Button (NEVER COLLAPSES - NO data-physics-id) */}
         <button
