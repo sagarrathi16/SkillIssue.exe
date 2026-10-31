@@ -36,14 +36,30 @@ export function RecoveryModal() {
   // Modal is visible when in MENTAL_BREAKDOWN or BENGALURU_BOSS_FIGHT
   const isVisible = isCollapsed || mood === OSMood.MENTAL_BREAKDOWN || mood === OSMood.BENGALURU_BOSS_FIGHT;
 
+  const stopVoiceRecording = () => {
+    setIsRecording(false);
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+    if (audioStreamRef.current) {
+      audioStreamRef.current.getTracks().forEach((track) => track.stop());
+      audioStreamRef.current = null;
+    }
+    if (analyserRef.current?.ctx) {
+      try {
+        analyserRef.current.ctx.close();
+      } catch (e) {}
+      analyserRef.current = null;
+    }
+  };
+
   // Cleanup media tracks on unmount
   useEffect(() => {
     return () => {
       stopVoiceRecording();
     };
   }, []);
-
-  if (!isVisible) return null;
 
   // =========================================================================
   // VOICE APOLOGY (Web Audio API AnalyserNode RMS Detection)
@@ -112,24 +128,6 @@ export function RecoveryModal() {
     }
   };
 
-  const stopVoiceRecording = () => {
-    setIsRecording(false);
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
-    }
-    if (audioStreamRef.current) {
-      audioStreamRef.current.getTracks().forEach((track) => track.stop());
-      audioStreamRef.current = null;
-    }
-    if (analyserRef.current?.ctx) {
-      try {
-        analyserRef.current.ctx.close();
-      } catch (e) {}
-      analyserRef.current = null;
-    }
-  };
-
   const handleVoiceButtonUp = () => {
     if (voiceProgress < 100) {
       stopVoiceRecording();
@@ -183,6 +181,8 @@ export function RecoveryModal() {
     actions.attemptApology('TEXT', typedApology, true, 40);
     setTypedApology('');
   };
+
+  if (!isVisible) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm select-none">
