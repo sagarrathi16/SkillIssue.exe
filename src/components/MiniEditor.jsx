@@ -30,16 +30,37 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
   const { mood } = state;
 
   const [code, setCode] = useState(DEFAULT_CODE_SNIPPET);
+  const [isJolting, setIsJolting] = useState(false);
+  const [errorLine, setErrorLine] = useState(null);
+  const [lastError, setLastError] = useState(null);
+
   const [consoleOutput, setConsoleOutput] = useState({
     status: 'idle',
     text: '👾 Arcade Compiler ready. Click "▶ RUN CODE" to evaluate JavaScript buffer.',
     timestamp: null,
   });
 
+  const triggerJolt = () => {
+    setIsJolting(true);
+    setTimeout(() => setIsJolting(false), 450);
+  };
+
+  // Trigger code jolt whenever trust drops or an abuse/mistake event occurs
+  const prevTrustRef = React.useRef(state.trust);
+  React.useEffect(() => {
+    if (state.trust < prevTrustRef.current) {
+      triggerJolt();
+    }
+    prevTrustRef.current = state.trust;
+  }, [state.trust, state.mistakeCount, state.rapidClickEvents]);
+
   // Listen for full judge demo reset event
   React.useEffect(() => {
     const handleFullReset = () => {
       setCode(DEFAULT_CODE_SNIPPET);
+      setErrorLine(null);
+      setLastError(null);
+      setIsJolting(false);
       setConsoleOutput({
         status: 'idle',
         text: '👾 Arcade Compiler ready. Click "▶ RUN CODE" to evaluate JavaScript buffer.',
@@ -54,6 +75,10 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
 
   const updateCode = (newCode) => {
     setCode(newCode);
+    if (errorLine !== null && newCode !== code) {
+      setErrorLine(null);
+      setLastError(null);
+    }
     if (onCodeChange) onCodeChange(newCode);
   };
 
@@ -61,6 +86,14 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
     // 1. Check for Ignored Warning Trigger
     if (dismissedCodeSnapshot && dismissedCodeSnapshot.trim() === code.trim()) {
       actions.reportIgnoredWarningRun();
+      setErrorLine(0);
+      setLastError({
+        errorType: 'IGNORED_WARNING',
+        message: 'Re-ran broken code without modifications',
+        lineNumber: 1,
+        penalty: 25,
+      });
+      triggerJolt();
       setConsoleOutput({
         status: 'error',
         text: '🚨 IGNORED WARNING: You re-ran without fixing the compiler warning! Koramangala founder behavior detected (-25 HP).',
@@ -75,12 +108,17 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
 
     if (!result.valid) {
       actions.reportMistake(result.errorType, result.message, result.penalty);
+      setErrorLine(result.lineIndex ?? null);
+      setLastError(result);
+      triggerJolt();
       setConsoleOutput({
         status: 'error',
         text: `❌ COMPILE ERROR [${result.errorType}]:\n${result.message} (-${result.penalty} HP)`,
         timestamp: Date.now(),
       });
     } else {
+      setErrorLine(null);
+      setLastError(null);
       setConsoleOutput({
         status: 'success',
         text: `✨ BUILD SUCCESS! Zero syntax anomalies detected.\nOutput: Expected Silk Board Delay: 146.5 mins`,
@@ -110,17 +148,30 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
 
   const isAnnoyed = mood === OSMood.SLIGHTLY_ANNOYED;
   const isBetrayal = mood === OSMood.PERSONAL_BETRAYAL;
+  const isBreakdown = mood === OSMood.MENTAL_BREAKDOWN || mood === OSMood.BENGALURU_BOSS_FIGHT;
+
+  const tiltClass = isBreakdown
+    ? 'code-tilted-breakdown border-[#FF4365] border-dashed shadow-[6px_6px_0px_#FF4365]'
+    : isBetrayal
+    ? 'code-tilted-betrayal border-rose-500 border-dashed shadow-[5px_5px_0px_#F43F5E]'
+    : isAnnoyed
+    ? 'code-tilted-annoyed border-amber-400 shadow-[4px_4px_0px_#FACC15]'
+    : 'border-black shadow-[4px_4px_0px_#000]';
+
+  const joltClass = isJolting ? 'anim-code-jolt' : '';
+
+  const codeGlitchClass = isBreakdown
+    ? 'code-glitch-heavy text-rose-100'
+    : isBetrayal
+    ? 'code-glitch-subtle text-amber-100'
+    : isAnnoyed
+    ? 'code-glitch-subtle text-amber-100'
+    : 'text-amber-100';
 
   return (
     <div
       // SACRED SAFE ZONE: NO data-physics-id here! This editor never falls.
-      className={`flex-1 flex flex-col bg-[#13141F] border-2 border-black shadow-[4px_4px_0px_#000] overflow-hidden transition-all duration-300 relative ${
-        isBetrayal
-          ? 'border-rose-500 shadow-[4px_4px_0px_#F43F5E]'
-          : isAnnoyed
-          ? 'border-amber-400 shadow-[4px_4px_0px_#FACC15]'
-          : 'border-black'
-      }`}
+      className={`flex-1 flex flex-col bg-[#13141F] border-2 overflow-hidden transition-all duration-300 relative ${tiltClass} ${joltClass}`}
     >
       {/* Editor Top Bar & Controls */}
       <div className="bg-[#1C1E2D] border-b-2 border-black px-4 py-2 flex items-center justify-between gap-3 text-xs select-none">
@@ -173,16 +224,81 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
         </div>
       </div>
 
+      {/* Code Integrity / Fracture Banner (Shows when something breaks in UI) */}
+      {lastError && (
+        <div className="bg-[#2A0E14] border-b-2 border-rose-600 px-3 py-1 flex items-center justify-between font-mono text-[11px] text-rose-300 select-none shrink-0 anim-code-jolt">
+          <div className="flex items-center gap-2">
+            <span className="text-sm">💥</span>
+            <span className="font-black text-rose-400 uppercase tracking-wide">
+              SYNTAX FRACTURE:
+            </span>
+            <span className="bg-black text-[#FACC15] font-bold px-1.5 py-0.2 border border-black text-[10px]">
+              {lastError.errorType || 'ERROR'}
+            </span>
+            {lastError.lineNumber && (
+              <span className="text-rose-300 font-bold hidden sm:inline">
+                at line {lastError.lineNumber}
+              </span>
+            )}
+          </div>
+          <span className="text-[10px] bg-rose-950 text-rose-300 border border-rose-600 px-1.5 py-0.5 font-bold">
+            UI INTEGRITY: -{lastError.penalty || 15} HP
+          </span>
+        </div>
+      )}
+
       {/* Editor Body: Line Numbers + Text Area */}
       <div className="flex-1 flex overflow-hidden font-mono text-xs sm:text-sm bg-[#0E0F1A] relative min-h-[220px]">
         {/* Line Numbers */}
-        <div className="w-10 sm:w-12 bg-[#161726] text-amber-400 font-bold py-3 pr-2.5 text-right select-none border-r-2 border-black shrink-0 font-mono text-xs">
-          {lines.map((_, i) => (
-            <div key={i} className="leading-6 opacity-80">
-              {i + 1}
-            </div>
-          ))}
+        <div className="w-10 sm:w-12 bg-[#161726] text-amber-400 font-bold py-3 pr-2.5 text-right select-none border-r-2 border-black shrink-0 font-mono text-xs z-10">
+          {lines.map((_, i) => {
+            const isErrorLine = errorLine === i;
+            return (
+              <div 
+                key={i} 
+                className={`leading-6 transition-all ${
+                  isErrorLine 
+                    ? 'bg-[#FF4365] text-black font-black px-1 border-y border-black animate-pulse shadow-[2px_0px_0px_#000]' 
+                    : 'opacity-80'
+                }`}
+                title={isErrorLine ? 'Syntax Fracture Line' : undefined}
+              >
+                {isErrorLine ? '💀' : i + 1}
+              </div>
+            );
+          })}
         </div>
+
+        {/* Broken Line Indicator Strip in background */}
+        {errorLine !== null && (
+          <div
+            className="absolute left-10 sm:left-12 right-0 pointer-events-none anim-error-line bg-rose-500/20 border-y border-rose-500/50 flex items-center justify-between px-3 z-0"
+            style={{
+              top: `${errorLine * 24 + 12}px`,
+              height: '24px',
+            }}
+          >
+            <span className="text-[10px] text-rose-400 font-mono font-bold tracking-wider">
+              ⚠️ SYNTAX FRACTURE HERE
+            </span>
+            <span className="text-[9px] bg-rose-600 text-white px-1.5 py-0.2 border border-black font-black font-mono">
+              BROKEN
+            </span>
+          </div>
+        )}
+
+        {/* Subtle digital glitch scanline tears across the code */}
+        {(isAnnoyed || isBetrayal || isBreakdown || errorLine !== null) && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-25 select-none z-0">
+            <div className="w-full h-1 bg-gradient-to-r from-transparent via-[#FF4365] to-transparent anim-scanline-glitch" />
+            {(isBetrayal || isBreakdown) && (
+              <div 
+                className="w-full h-0.5 bg-cyan-400/50 anim-scanline-glitch" 
+                style={{ animationDelay: '1.2s' }} 
+              />
+            )}
+          </div>
+        )}
 
         {/* Text Area */}
         <textarea
@@ -190,7 +306,7 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
           onChange={(e) => updateCode(e.target.value)}
           onKeyDown={handleKeyDown}
           spellCheck="false"
-          className="flex-1 bg-transparent text-amber-100 p-3 leading-6 resize-none focus:outline-none focus:ring-0 font-mono text-xs sm:text-sm overflow-y-auto selection:bg-[#FACC15] selection:text-black"
+          className={`flex-1 bg-transparent p-3 leading-6 resize-none focus:outline-none focus:ring-0 font-mono text-xs sm:text-sm overflow-y-auto selection:bg-[#FACC15] selection:text-black relative z-10 transition-colors ${codeGlitchClass}`}
           placeholder="Write JavaScript code here..."
         />
       </div>

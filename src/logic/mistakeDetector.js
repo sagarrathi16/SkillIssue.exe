@@ -33,6 +33,9 @@ export function validateCode(code) {
 
   // 1. Check for deprecated 'var'
   if (/\bvar\s+[a-zA-Z_$]/.test(code)) {
+    const lines = code.split('\n');
+    const varLineIndex = lines.findIndex((l) => /\bvar\s+[a-zA-Z_$]/.test(l));
+    const lineIndex = varLineIndex !== -1 ? varLineIndex : 0;
     return {
       valid: false,
       errorType: 'DEPRECATED_VAR',
@@ -40,6 +43,8 @@ export function validateCode(code) {
       penalty: 20,
       meme: '/memes/drake_var.jpg',
       memeCaption: 'const & let? ❌ | var in 2026? ✔️',
+      lineIndex,
+      lineNumber: lineIndex + 1,
     };
   }
 
@@ -64,6 +69,7 @@ export function validateCode(code) {
       stack.push({ char, index: i });
     } else if (closingBrackets.has(char)) {
       if (stack.length === 0) {
+        const errLine = code.substring(0, i).split('\n').length - 1;
         return {
           valid: false,
           errorType: 'UNBALANCED_BRACKET',
@@ -71,10 +77,13 @@ export function validateCode(code) {
           penalty: 15,
           meme: '/memes/this_is_fine.jpg',
           memeCaption: 'Syntax error: unexpected bracket. This is fine.',
+          lineIndex: errLine,
+          lineNumber: errLine + 1,
         };
       }
       const top = stack.pop();
       if (bracketPairs[char] !== top.char) {
+        const errLine = code.substring(0, i).split('\n').length - 1;
         return {
           valid: false,
           errorType: 'UNBALANCED_BRACKET',
@@ -82,6 +91,8 @@ export function validateCode(code) {
           penalty: 15,
           meme: '/memes/this_is_fine.jpg',
           memeCaption: 'Mismatched brackets. This is fine.',
+          lineIndex: errLine,
+          lineNumber: errLine + 1,
         };
       }
     }
@@ -89,6 +100,7 @@ export function validateCode(code) {
 
   if (stack.length > 0) {
     const unclosed = stack[stack.length - 1];
+    const errLine = code.substring(0, unclosed.index).split('\n').length - 1;
     return {
       valid: false,
       errorType: 'UNBALANCED_BRACKET',
@@ -96,6 +108,8 @@ export function validateCode(code) {
       penalty: 15,
       meme: '/memes/this_is_fine.jpg',
       memeCaption: 'Missing bracket. This is fine.',
+      lineIndex: errLine,
+      lineNumber: errLine + 1,
     };
   }
 
@@ -117,6 +131,8 @@ export function validateCode(code) {
         penalty: 10,
         meme: '/memes/spiderman.jpg',
         memeCaption: 'JavaScript without semicolons',
+        lineIndex: i,
+        lineNumber: i + 1,
       };
     }
   }
