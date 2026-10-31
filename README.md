@@ -178,3 +178,4 @@ npm run build
 
 Built with ❤️, filter coffee, and patience at **CodeDay Bengaluru 2026**.  
 *“The bug is fixed. The emotional damage remains.”*
+
