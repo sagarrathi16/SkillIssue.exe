@@ -15,6 +15,38 @@ import {
   Trophy
 } from 'lucide-react';
 
+function highlightTokens(codeLine) {
+  const tokens = [];
+  const regex = /(\b(?:const|let|var|function|return|if|else|while|for|class|import|from|export|true|false|null|undefined)\b)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|(\b\d+(?:\.\d+)?\b)|([{}()\[\];,])|(\S+)/g;
+  let match;
+  let lastIndex = 0;
+
+  while ((match = regex.exec(codeLine)) !== null) {
+    if (match.index > lastIndex) {
+      tokens.push(<span key={lastIndex}>{codeLine.substring(lastIndex, match.index)}</span>);
+    }
+    const [full, keyword, str, num, punctuation] = match;
+    if (keyword) {
+      tokens.push(<span key={match.index} className="text-[#38BDF8] font-bold">{full}</span>);
+    } else if (str) {
+      tokens.push(<span key={match.index} className="text-[#34D399]">{full}</span>);
+    } else if (num) {
+      tokens.push(<span key={match.index} className="text-[#FACC15]">{full}</span>);
+    } else if (punctuation) {
+      tokens.push(<span key={match.index} className="text-slate-400">{full}</span>);
+    } else {
+      tokens.push(<span key={match.index} className="text-[#94A3B8]">{full}</span>);
+    }
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < codeLine.length) {
+    tokens.push(<span key={lastIndex}>{codeLine.substring(lastIndex)}</span>);
+  }
+
+  return tokens.length > 0 ? tokens : codeLine;
+}
+
 export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismissedCode }) {
   const { state, actions } = useOS();
   const { mood } = state;
@@ -451,16 +483,6 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
         </div>
       </div>
 
-      {/* Dedicated Question Task Prompt Banner (Lighter text color) */}
-      <div className="bg-[#181A2C] border-b-2 border-black px-4 py-2 flex items-start gap-2.5 text-xs select-none">
-        <span className="bg-[#FACC15] text-black font-black px-1.5 py-0.5 border border-black font-mono text-[10px] shrink-0 uppercase tracking-wide">
-          // QUESTION
-        </span>
-        <p className="text-[#F8FAFC] font-mono text-xs sm:text-[13px] font-semibold leading-relaxed">
-          {activeChallenge.taskPrompt}
-        </p>
-      </div>
-
       {/* OS Congratulation Celebration Ribbon */}
       {congratsBanner && (
         <div className="bg-[#10B981] text-black border-b-2 border-black px-4 py-2 flex items-center justify-between font-mono text-xs font-black shadow-[0_2px_0_#000] animate-in fade-in slide-in-from-top duration-300">
@@ -571,12 +593,12 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
                 return (
                   <div 
                     key={idx} 
-                    className={`leading-6 text-[#F8FAFC] font-semibold tracking-wide ${
+                    className={`leading-6 text-[#E2E8F0] ${
                       isErrorLine ? 'bg-rose-500/20 text-rose-100' : ''
                     }`}
                   >
-                    <span className="text-[#94A3B8] font-mono mr-1 opacity-80">//</span>
-                    <span className="text-[#F8FAFC] font-mono">{line.replace(/^(\s*)\/\/\s?/, '$1')}</span>
+                    <span className="text-[#94A3B8] font-mono mr-1">//</span>
+                    <span className="text-[#E2E8F0] font-mono">{line.replace(/^(\s*)\/\/\s?/, '$1')}</span>
                   </div>
                 );
               }
@@ -589,10 +611,10 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
                     key={idx} 
                     className={`leading-6 ${isErrorLine ? 'bg-rose-500/20' : ''}`}
                   >
-                    <span className="text-amber-100 font-mono">{codePart}</span>
-                    <span className="text-[#F8FAFC] font-semibold font-mono">
-                      <span className="text-[#94A3B8] opacity-80 font-mono">//</span>
-                      <span className="text-[#F8FAFC] font-mono">{commentPart.replace(/^\/\/\s?/, ' ')}</span>
+                    <span className="text-[#94A3B8] font-mono">{highlightTokens(codePart)}</span>
+                    <span className="text-[#E2E8F0] font-mono">
+                      <span className="text-[#94A3B8] font-mono">//</span>
+                      <span className="text-[#E2E8F0] font-mono">{commentPart.replace(/^\/\/\s?/, ' ')}</span>
                     </span>
                   </div>
                 );
@@ -600,9 +622,9 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
               return (
                 <div 
                   key={idx} 
-                  className={`leading-6 text-amber-100 font-mono ${isErrorLine ? 'bg-rose-500/20' : ''}`}
+                  className={`leading-6 text-[#94A3B8] font-mono ${isErrorLine ? 'bg-rose-500/20' : ''}`}
                 >
-                  {line || ' '}
+                  {highlightTokens(line)}
                 </div>
               );
             })}
