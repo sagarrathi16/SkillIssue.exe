@@ -24,8 +24,14 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
   const [congratsBanner, setCongratsBanner] = useState(null);
 
   const [code, setCode] = useState(CODING_CHALLENGES[0].starterCode);
+  const [isJolting, setIsJolting] = useState(false);
   const [errorLine, setErrorLine] = useState(null);
   const [lastError, setLastError] = useState(null);
+
+  const triggerJolt = () => {
+    setIsJolting(true);
+    setTimeout(() => setIsJolting(false), 350);
+  };
 
   const [consoleOutput, setConsoleOutput] = useState({
     status: 'idle',
@@ -293,7 +299,7 @@ export function MiniEditor({ dismissedCodeSnapshot, onCodeChange, onClearDismiss
   return (
     <div
       // SACRED SAFE ZONE: NO data-physics-id here! This editor never falls.
-      className={`flex-1 flex flex-col bg-[#13141F] border-2 overflow-hidden transition-all duration-300 relative ${borderClass}`}
+      className={`flex-1 flex flex-col bg-[#13141F] border-2 overflow-hidden transition-all duration-300 relative ${borderClass} ${isJolting ? 'anim-code-jolt' : ''}`}
     >
       {/* Editor Top Bar & Controls */}
       <div className="bg-[#1C1E2D] border-b-2 border-black px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs select-none">
