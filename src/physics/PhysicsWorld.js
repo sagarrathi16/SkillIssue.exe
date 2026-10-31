@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import Matter from 'matter-js';
 import { OSMood } from '../app/osStateMachine.js';
+import { audioManager } from '../audio/AudioManager.js';
 
 /**
  * PhysicsWorld Manager
@@ -274,6 +275,7 @@ export function usePhysicsCollapse({ mood, trust, onRecoveryComplete }) {
     if (mood === OSMood.MENTAL_BREAKDOWN || mood === OSMood.BENGALURU_BOSS_FIGHT) {
       if (!manager.isActive) {
         manager.startCollapse();
+        audioManager.playShatterThud();
       }
     } 
     // Trigger smooth restoration when entering RECOVERY

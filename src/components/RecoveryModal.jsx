@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOS, OSMood } from '../app/osStateMachine';
+import { audioManager } from '../audio/AudioManager';
 import { BugSmasherGame } from './games/BugSmasherGame';
 import { DareRoulette } from './games/DareRoulette';
 import { 
@@ -13,11 +14,40 @@ export function RecoveryModal() {
   const { mood, trust, isCollapsed } = state;
 
   const [activeTab, setActiveTab] = useState('arcade_game'); // 'arcade_game' | 'dare_roulette'
+  const [hasSettled, setHasSettled] = useState(false);
 
-  // Modal is visible when in MENTAL_BREAKDOWN or BENGALURU_BOSS_FIGHT
-  const isVisible = isCollapsed || mood === OSMood.MENTAL_BREAKDOWN || mood === OSMood.BENGALURU_BOSS_FIGHT;
+  // Modal is eligible when in MENTAL_BREAKDOWN or BENGALURU_BOSS_FIGHT
+  const isEligible = isCollapsed || mood === OSMood.MENTAL_BREAKDOWN || mood === OSMood.BENGALURU_BOSS_FIGHT;
 
-  if (!isVisible) return null;
+  useEffect(() => {
+    let timer;
+    if (isEligible) {
+      // Delay showing the challenge popup by 2.2s so the user can watch the UI collapse into the physics pile!
+      timer = setTimeout(() => {
+        setHasSettled(true);
+        audioManager.playSfx('warning');
+      }, 2200);
+    } else {
+      setHasSettled(false);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isEligible]);
+
+  if (!isEligible) return null;
+
+  // While the UI is collapsing and tumbling, display a non-blocking floating indicator
+  if (!hasSettled) {
+    return (
+      <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 pointer-events-none select-none">
+        <div className="bg-[#FF4365] text-black font-black px-4 py-2 border-3 border-black shadow-[4px_4px_0px_#000] text-xs font-mono uppercase tracking-wider flex items-center gap-2 animate-bounce">
+          <Skull className="w-4 h-4 animate-spin" />
+          <span>💥 CATASTROPHIC COLLAPSE! WATCHING THE CRASH...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm select-none">
