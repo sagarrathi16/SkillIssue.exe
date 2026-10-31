@@ -56,7 +56,6 @@ export function Sidebar() {
     >
       {/* 1. Main Tool Navigation Icons (Cartridge Rack) */}
       <div 
-        data-physics-id="sidebar-nav-icons"
         className="flex flex-col items-center gap-2.5 w-full px-2"
       >
         {NAV_ITEMS.map((item, idx) => {
@@ -71,6 +70,7 @@ export function Sidebar() {
           return (
             <button
               key={item.id}
+              data-physics-id={`sidebar-nav-${item.id}`}
               onClick={() => handleTabClick(item.id)}
               className={`w-10 h-10 border-2 border-black flex items-center justify-center transition-all cursor-pointer relative group ${tiltClass} ${
                 isActive

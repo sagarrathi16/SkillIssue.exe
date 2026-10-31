@@ -76,18 +76,21 @@ export class PhysicsManager {
     this.boundaries = [floor, leftWall, rightWall];
     Matter.World.add(this.world, this.boundaries);
 
-    // 4. Measure, create placeholders, and construct Matter.js bodies
-    const bodies = [];
-
-    elements.forEach((el) => {
+    // 4. STEP 1: Batch-measure all elements before mutating DOM
+    const measuredItems = elements.map((el) => {
       const id = el.getAttribute('data-physics-id');
       const rect = el.getBoundingClientRect();
-
-      // Skip elements that are not currently rendered/visible
-      if (rect.width === 0 || rect.height === 0) return;
-
       const originalStyle = el.getAttribute('style') || '';
+      const computedDisplay = (typeof window !== 'undefined' && window.getComputedStyle)
+        ? window.getComputedStyle(el).display
+        : 'block';
+      return { el, id, rect, originalStyle, computedDisplay };
+    }).filter(({ rect }) => rect.width > 0 && rect.height > 0);
 
+    // 4. STEP 2: Detach elements right at their exact coordinates and create rigid bodies
+    const bodies = [];
+
+    measuredItems.forEach(({ el, id, rect, originalStyle, computedDisplay }) => {
       // Create an invisible placeholder with identical dimensions to prevent layout reflow
       const placeholder = document.createElement('div');
       placeholder.setAttribute('data-physics-placeholder', id);
@@ -96,15 +99,15 @@ export class PhysicsManager {
       placeholder.style.visibility = 'hidden';
       placeholder.style.pointerEvents = 'none';
       placeholder.style.flexShrink = '0';
-      
-      const computedDisplay = window.getComputedStyle(el).display;
       placeholder.style.display = computedDisplay === 'inline' ? 'inline-block' : computedDisplay;
 
       if (el.parentNode) {
         el.parentNode.insertBefore(placeholder, el);
       }
 
-      // Detach element into fixed position
+      // Detach element into fixed position directly at its current rendered location
+      el.style.transition = 'none'; // IMPORTANT: disable transition so element doesn't animate from (0,0)
+      el.style.animation = 'none';  // Disable any active CSS jitter animations
       el.style.position = 'fixed';
       el.style.top = '0px';
       el.style.left = '0px';
@@ -116,25 +119,25 @@ export class PhysicsManager {
       el.style.transform = `translate3d(${rect.left}px, ${rect.top}px, 0) rotate(0rad)`;
       el.style.willChange = 'transform';
 
-      // Create rigid body
+      // Create rigid body centered exactly at its current screen location
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
 
       const body = Matter.Bodies.rectangle(centerX, centerY, rect.width, rect.height, {
-        restitution: 0.38,
-        friction: 0.12,
+        restitution: 0.32,
+        friction: 0.15,
         frictionAir: 0.015,
         density: 0.001,
         label: id,
       });
 
-      // Theatrical chaos: slight random angular velocity and horizontal impulse
-      const randomAngVel = (Math.random() - 0.5) * 0.14; // rad/s
+      // Subtle natural tilt as it falls (no upward pop!)
+      const randomAngVel = (Math.random() - 0.5) * 0.08;
       Matter.Body.setAngularVelocity(body, randomAngVel);
 
-      const forceX = (Math.random() - 0.5) * 0.04 * body.mass;
-      const forceY = (Math.random() * -0.012) * body.mass; // subtle initial jump
-      Matter.Body.applyForce(body, body.position, { x: forceX, y: forceY });
+      // Gentle lateral drift only (forceY is 0 so it starts dropping immediately from its current place)
+      const forceX = (Math.random() - 0.5) * 0.006 * body.mass;
+      Matter.Body.applyForce(body, body.position, { x: forceX, y: 0 });
 
       bodies.push(body);
       this.elementCache.set(el, { id, rect, originalStyle, placeholder, body });
